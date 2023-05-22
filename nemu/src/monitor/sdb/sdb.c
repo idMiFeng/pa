@@ -73,7 +73,7 @@ static int cmd_si(char *args)
 //打印程序状态
 static int cmd_info(char *args){
   if (args==NULL){
-    printf("\"r\"-Print register status  or  \"w\"-Print watchpoint information");
+    printf("\"r\"-Print register status  or  \"w\"-Print watchpoint information\n");
   }
   else if (strcmp(args, "r") == 0){
     isa_reg_display();
@@ -93,7 +93,7 @@ static int cmd_x(char *args){
   uint32_t startAddress;
 	sscanf(args,"%d%x",&N,&startAddress);
 	for (int i = 0;i < N;i ++){
-      printf("%x\t", paddr_read(startAddress,4));
+      printf("%x\n", paddr_read(startAddress,4));
       startAddress += 4;
   
   }
