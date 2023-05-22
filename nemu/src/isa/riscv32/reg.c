@@ -12,6 +12,8 @@
 *
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
+#include <common.h>
+
 
 #include <isa.h>
 #include "local-include/reg.h"
@@ -24,8 +26,15 @@ const char *regs[] = {
 };
 
 void isa_reg_display() {
-}
+    printf("Register Values:\n");
 
+    for (int i = 0; i < 32; i++) {
+        printf("%s: 0x%08x\n", regs[i], cpu.gpr[i]);
+    }
+
+    printf("PC: 0x%08x\n", cpu.pc);
+    printf("liaoxue");
+} 
 word_t isa_reg_str2val(const char *s, bool *success) {
   return 0;
 }

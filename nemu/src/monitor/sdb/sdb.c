@@ -105,6 +105,8 @@ static int cmd_x(char *args){
    return 0;
 }
 
+
+//可用的命令
 static struct {
   const char *name;
   const char *description;
@@ -123,6 +125,8 @@ static struct {
 
 #define NR_CMD ARRLEN(cmd_table)
 
+
+//帮助信息
 static int cmd_help(char *args) {
   /* extract the first argument */
   char *arg = strtok(NULL, " ");
@@ -150,6 +154,8 @@ void sdb_set_batch_mode() {
   is_batch_mode = true;
 }
 
+
+//主循环在这里定义//////////////////////////////////////////////////////////////////////////////
 void sdb_mainloop() {
   if (is_batch_mode) {
     cmd_c(NULL);
