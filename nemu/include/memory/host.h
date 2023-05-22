@@ -20,7 +20,7 @@
 
 static inline word_t host_read(void *addr, int len) {
   switch (len) {
-    case 1: return *(uint8_t  *)addr;
+    case 1: return *(uint8_t  *)addr; //将地址addr强制转换为uint8_t*类型的指针ptr，然后使用解引用操作*ptr获取存储在该地址的1字节大小的值
     case 2: return *(uint16_t *)addr;
     case 4: return *(uint32_t *)addr;
     IFDEF(CONFIG_ISA64, case 8: return *(uint64_t *)addr);

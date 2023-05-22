@@ -21,6 +21,9 @@
 static IOMap maps[NR_MAP] = {};
 static int nr_map = 0;
 
+
+//根据给定的物理地址addr，在一组I/O映射表（maps）中查找对应的映射项（IOMap）。
+//首先调用find_mapid_by_addr函数来查找具有给定物理地址的映射项的索引（mapid）。如果找到了匹配的映射项，则返回对应的映射项指针（&maps[mapid]），否则返回NULL。
 static IOMap* fetch_mmio_map(paddr_t addr) {
   int mapid = find_mapid_by_addr(maps, nr_map, addr);
   return (mapid == -1 ? NULL : &maps[mapid]);

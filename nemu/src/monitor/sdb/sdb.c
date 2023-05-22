@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>//引入paddr_read
 
 static int is_batch_mode = false;
 
@@ -42,6 +43,7 @@ static char* rl_gets() {
   return line_read;
 }
 
+//中止的程序继续执行
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
@@ -55,6 +57,49 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+//单部执行
+static int cmd_si(char *args)
+{
+  int n;
+  if (args==NULL){
+    n=1;
+  }
+  else sscanf(args,"%d",&n);
+  cpu_exec(n);
+  return 0;
+
+}
+
+//打印程序状态
+static int cmd_info(char *args){
+  if (args==NULL){
+    printf("\"r\"-Print register status  or  \"w\"-Print watchpoint information");
+  }
+  else if (strcmp(args, "r") == 0){
+    isa_reg_display();
+  }
+  
+  return 0;
+}
+
+
+//扫描内存
+static int cmd_x(char *args){
+  if (args == NULL) {
+        printf("Wrong Command!\n");
+        return 0;
+    }                                                                           
+	int N;
+  uint32_t startAddress;
+	sscanf(args,"%d%x",&N,&startAddress);
+	for (int i = 0;i < N;i ++){
+      printf("%x\t", paddr_read(startAddress,4));
+      startAddress += 4;
+  
+  }
+   return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -63,6 +108,9 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  {"si","single step",cmd_si},
+  {"info","Print program status",cmd_info},
+  { "x", "Usage: x N EXPR. Scan the memory from EXPR by N bytes", cmd_x },
 
   /* TODO: Add more commands */
 
