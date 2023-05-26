@@ -105,6 +105,20 @@ static int cmd_x(char *args){
    return 0;
 }
 
+//表达式求值
+static int cmd_p(char *args){
+  bool success=true;
+  word_t res = expr(args, &success);
+  if (!success) 
+  {
+    puts("invalid expression");
+  } else 
+  {
+    printf("%u\n", res);
+  }
+  return 0; 
+}
+
 
 //可用的命令
 static struct {
@@ -118,10 +132,13 @@ static struct {
   {"si","single step",cmd_si},
   {"info","Print program status",cmd_info},
   { "x", "Usage: x N EXPR. Scan the memory from EXPR by N bytes", cmd_x },
+  {"p","Expression evaluation",cmd_p},
 
   /* TODO: Add more commands */
 
 };
+
+
 
 #define NR_CMD ARRLEN(cmd_table)
 
