@@ -13,6 +13,11 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+/*
+正则表达式中负号的匹配；
+计算结果错误
+*/
+
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
