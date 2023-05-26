@@ -59,7 +59,7 @@ static struct rule {
   {"\\b[0-9]+\\b", TK_NUMBER},   //number 
   {"\\(", '('},         // 左括号
   {"\\)", ')'},         // 右括号
-  //{"(?<![0-9\\d)])-",TK_NEGATIVE},  //负号
+  {"(?<![0-9\\d)])-",TK_NEGATIVE},  //负号
 };
 
 
