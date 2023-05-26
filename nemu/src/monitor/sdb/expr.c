@@ -222,9 +222,10 @@ bool check_parentheses(word_t p,word_t q)
 /********************************************find_major函数寻找主运算符**********************************************************************/
 word_t find_major(word_t p,word_t q)
 {
-  word_t ret;
+  word_t ret=0;
   word_t par=0;//括号的数量
   word_t op_type=0; //当前找到的最高优先级的运算符类型
+  word_t tmp_type=0; //相应运算符类型的等级
   for(word_t i=p;i<=q;i++)
   {
     if (tokens[i].type ==TK_NUMBER)
@@ -252,18 +253,18 @@ word_t find_major(word_t p,word_t q)
     }
     else
     {
-      word_t tmp_type=0; //相应运算符类型的等级
       switch (tokens[i].type) 
       {
       case '*': case '/': tmp_type = 1; break;
       case '+': case '-': tmp_type = 2; break;
       default: assert(0);
+      }
       if (tmp_type>=op_type)
       {
         op_type=tmp_type;
         ret=i;
       }
-      }
+      
     }
 
   }
