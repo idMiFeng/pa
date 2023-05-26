@@ -184,7 +184,7 @@ static bool make_token(char *e) {
 /**********************************************check_parentheses函数判断括号是否合法*******************************************************************/
 bool check_parentheses(word_t p,word_t q)
 {
-  bool flag=true;
+  bool flag=false;
   if(tokens[p].type=='(' && tokens[q].type == ')')
   {
     for(int i =p+1;i<q;)
@@ -192,7 +192,7 @@ bool check_parentheses(word_t p,word_t q)
       
       if (tokens[i].type==')')
       {
-        flag=false;
+        
         break;
       }
 
@@ -203,7 +203,7 @@ bool check_parentheses(word_t p,word_t q)
           i++;
           if(i==q-1)
           {
-            flag=false;
+            
             break;
           }
         }
@@ -213,6 +213,7 @@ bool check_parentheses(word_t p,word_t q)
       else i++;
         
     }
+    flag=true;
   }
   return flag;
 }
@@ -281,7 +282,9 @@ word_t eval(word_t p,word_t q)
     }
     else if (p==q)
     {
-      return tokens[p].type;
+      word_t num;
+      sscanf(tokens[p].str,"%d",&num);
+      return num;
     }
     else if (check_parentheses(p, q) == true) 
     {
