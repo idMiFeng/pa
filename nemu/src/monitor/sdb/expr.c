@@ -16,6 +16,7 @@
 /*
 正则表达式中负号的匹配；
 计算结果错误
+匹配到负号无法解决
 */
 
 #include <isa.h>
@@ -228,6 +229,11 @@ word_t find_major(word_t p,word_t q)
   word_t tmp_type=0; //相应运算符类型的等级
   for(word_t i=p;i<=q;i++)
   {
+    if(tokens[i].type==TK_NEGATIVE)
+    {
+      ret=i;
+      return ret;
+    }
     if (tokens[i].type ==TK_NUMBER)
     {
       continue;
@@ -277,6 +283,7 @@ word_t find_major(word_t p,word_t q)
 /**********************************************evalh求值函数*******************************************************************/
 word_t eval(word_t p,word_t q)
 {
+    
     if(p>q)
     {
       assert(0);
@@ -299,7 +306,7 @@ word_t eval(word_t p,word_t q)
       word_t op=find_major(p,q);  //主运算符的索引
       word_t val1 = eval(p, op - 1);
       word_t val2 = eval(op + 1, q);
-      if (tokens[op].type==TK_NEGATIVE)
+      if(tokens[op].type==TK_NEGATIVE)
       {
         return -val2;
       }
