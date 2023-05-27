@@ -60,7 +60,7 @@ static struct rule {
   {"\\b[0-9]+\\b", TK_NUMBER},   //number 
   {"\\(", '('},         // 左括号
   {"\\)", ')'},         // 右括号
-  {"([^0-9)]|^)-",TK_NEGATIVE},  //负号
+  //{"([^0-9)]|^)-",TK_NEGATIVE},  //负号
 };
 
 
@@ -82,7 +82,7 @@ void init_regex() {
   char error_msg[128];
   int ret;
 
-  for (i = 0; i < NR_REGEX-1; i ++) {
+  for (i = 0; i < NR_REGEX; i ++) {
     ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
     if (ret != 0) {
       regerror(ret, &re[i], error_msg, 128);
@@ -157,16 +157,18 @@ static bool make_token(char *e) {
            tokens[nr_token++] = token;
            break;
         }
-        regmatch_t pmatch2;
 
+
+
+        // regmatch_t pmatch2;
         //排查负号
-        for (i=0;i<nr_token;i++)
-        {
-          if(regexec(&re[NR_REGEX-1], tokens[i].str, 1, &pmatch2, 0) == 0)
-          {
-            tokens[i].type=TK_NEGATIVE;
-          }
-        }
+        // for (i=0;i<nr_token;i++)
+        // {
+        //   if(regexec(&re[NR_REGEX-1], tokens[i].str, 1, &pmatch2, 0) == 0)
+        //   {
+        //     tokens[i].type=TK_NEGATIVE;
+        //   }
+        // }
 
         break;
       }
@@ -229,11 +231,11 @@ word_t find_major(word_t p,word_t q)
   word_t tmp_type=0; //相应运算符类型的等级
   for(word_t i=p;i<=q;i++)
   {
-    if(tokens[i].type==TK_NEGATIVE)
-    {
-      ret=i;
-      return ret;
-    }
+    // if(tokens[i].type==TK_NEGATIVE)//负号
+    // {
+    //   ret=i;
+    //   return ret;
+    // }
     if (tokens[i].type ==TK_NUMBER)
     {
       continue;
@@ -306,10 +308,10 @@ word_t eval(word_t p,word_t q)
       word_t op=find_major(p,q);  //主运算符的索引
       word_t val1 = eval(p, op - 1);
       word_t val2 = eval(op + 1, q);
-      if(tokens[op].type==TK_NEGATIVE)
-      {
-        return -val2;
-      }
+      // if(tokens[op].type==TK_NEGATIVE)
+      // {
+      //   return -val2;
+      // }
        switch (tokens[op].type) 
       {
       case '+': return val1 + val2;
