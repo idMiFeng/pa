@@ -108,7 +108,7 @@ static int cmd_x(char *args){
 //表达式求值
 static int cmd_p(char *args){
   bool success=true;
-  word_t res = expr(args, &success);
+  int32_t res = expr(args, &success);
   if (!success) 
   {
     puts("invalid expression");

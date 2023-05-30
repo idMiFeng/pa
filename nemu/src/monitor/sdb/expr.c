@@ -158,18 +158,6 @@ static bool make_token(char *e) {
            break;
         }
 
-
-
-        // regmatch_t pmatch2;
-        //排查负号
-        // for (i=0;i<nr_token;i++)
-        // {
-        //   if(regexec(&re[NR_REGEX-1], tokens[i].str, 1, &pmatch2, 0) == 0)
-        //   {
-        //     tokens[i].type=TK_NEGATIVE;
-        //   }
-        // }
-
         break;
       }
     }
@@ -287,7 +275,7 @@ word_t find_major(word_t p,word_t q)
 }
 
 
-/**********************************************evalh求值函数*******************************************************************/
+/**********************************************eval求值函数*******************************************************************/
 int32_t eval(word_t p,word_t q)
 {
     
@@ -311,13 +299,15 @@ int32_t eval(word_t p,word_t q)
     else
     {
       word_t op=find_major(p,q);  //主运算符的索引
-      int32_t val1 = eval(p, op - 1);
+      
       int32_t val2 = eval(op + 1, q);  //可能是负数
       if(tokens[op].type==TK_NEGATIVE)
       {
         val2=-val2;
         return val2;
       }
+      int32_t val1 = eval(p, op - 1);//写在后是为了防止op是负数导致eval传入的p>q
+
        switch (tokens[op].type) 
       {
       case '+': return val1 + val2;
@@ -335,7 +325,7 @@ int32_t eval(word_t p,word_t q)
 
 
 
-word_t expr(char *e, bool *success) {
+int32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
