@@ -316,6 +316,7 @@ int32_t eval(word_t p,word_t q)
       if(tokens[op].type==TK_NEGATIVE)
       {
         val2=-val2;
+        return val2;
       }
        switch (tokens[op].type) 
       {
