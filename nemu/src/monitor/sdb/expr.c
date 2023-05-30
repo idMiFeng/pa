@@ -221,7 +221,7 @@ word_t find_major(word_t p,word_t q)
   {
     if (tokens[i].type=='-')//负号处理
     {
-      if(tokens[i-1].type=='(' || i==p)
+      if(i==p)
       {
         tokens[i].type=TK_NEGATIVE;
         return i;
