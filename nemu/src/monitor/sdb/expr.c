@@ -238,7 +238,7 @@ word_t find_major(word_t p,word_t q)
         tokens[i].type=TK_NEGATIVE;
         return i;
       }
-      continue;
+      
     }
     
     if (tokens[i].type ==TK_NUMBER)
