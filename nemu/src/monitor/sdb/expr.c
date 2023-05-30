@@ -231,11 +231,16 @@ word_t find_major(word_t p,word_t q)
   word_t tmp_type=0; //相应运算符类型的等级
   for(word_t i=p;i<=q;i++)
   {
-    // if(tokens[i].type==TK_NEGATIVE)//负号
-    // {
-    //   ret=i;
-    //   return ret;
-    // }
+    if (tokens[i].type=='-')//负号处理
+    {
+      if(tokens[i-1].type=='(' || i==p)
+      {
+        tokens[i].type=TK_NEGATIVE;
+        return i;
+      }
+      continue;
+    }
+    
     if (tokens[i].type ==TK_NUMBER)
     {
       continue;
@@ -283,7 +288,7 @@ word_t find_major(word_t p,word_t q)
 
 
 /**********************************************evalh求值函数*******************************************************************/
-word_t eval(word_t p,word_t q)
+int32_t eval(word_t p,word_t q)
 {
     
     if(p>q)
@@ -306,12 +311,12 @@ word_t eval(word_t p,word_t q)
     else
     {
       word_t op=find_major(p,q);  //主运算符的索引
-      word_t val1 = eval(p, op - 1);
-      word_t val2 = eval(op + 1, q);
-      // if(tokens[op].type==TK_NEGATIVE)
-      // {
-      //   return -val2;
-      // }
+      int32_t val1 = eval(p, op - 1);
+      int32_t val2 = eval(op + 1, q);  //可能是负数
+      if(tokens[op].type==TK_NEGATIVE)
+      {
+        val2=-val2;
+      }
        switch (tokens[op].type) 
       {
       case '+': return val1 + val2;
