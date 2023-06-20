@@ -14,9 +14,7 @@
 ***************************************************************************************/
 
 /*
-正则表达式中负号的匹配；
-计算结果错误
-匹配到负号无法解决
+
 */
 
 #include <isa.h>
@@ -36,7 +34,7 @@ regfree()：释放编译后的正则表达式。*/
 //定义了一个枚举类型，用于表示不同的标记类型。每个标记类型都与一个整数值关联。
 //这种设置是为了确保 TK_NOTYPE 的值大于 255，以便在后续代码中可以与 ASCII 字符一起使用，而不会与 ASCII 字符冲突。
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,TK_NEGATIVE,
+  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,TK_NEGATIVE,TK_NOEQ,
 
   /* TODO: Add more token types */
 
@@ -54,6 +52,7 @@ static struct rule {
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
   {"==", TK_EQ},        // equal
+  {"!=",TK_NOEQ},           //
   {"-",'-'},            // minus
   {"\\*",'*'},          // multiplication
   {"/",'/'},            // divisions
@@ -258,6 +257,7 @@ word_t find_major(word_t p,word_t q)
       {
       case '*': case '/': tmp_type = 1; break;
       case '+': case '-': tmp_type = 2; break;
+      case TK_EQ:case TK_NOEQ:tmp_type=3;break;
       default: assert(0);
       }
       if (tmp_type>=op_type)
@@ -314,6 +314,8 @@ int32_t eval(word_t p,word_t q)
       case '-': return val1 - val2;
       case '*': return val1 * val2;
       case '/': return val1 / val2;
+      case TK_EQ: return 1;
+      case TK_NOEQ:return 0;
       default: assert(0);
       }
     }
@@ -324,7 +326,7 @@ int32_t eval(word_t p,word_t q)
 
 
 
-
+//成功解析命令行并存放在tokens中，再调用eval函数z求值
 int32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
