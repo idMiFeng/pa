@@ -326,6 +326,11 @@ int32_t eval(word_t p,word_t q)
       //指针解引用
       if(tokens[op].type==TK_POINTER_DEREF && tokens[op+1].type==TK_STRING)
       {
+        int p=10;
+        int* ptr=&p;
+        int a=5;
+        a=p+*ptr;
+        a++;
         return *tokens[op+1].str;
       }
       
