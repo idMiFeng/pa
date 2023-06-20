@@ -34,7 +34,7 @@ regfree()：释放编译后的正则表达式。*/
 //定义了一个枚举类型，用于表示不同的标记类型。每个标记类型都与一个整数值关联。
 //这种设置是为了确保 TK_NOTYPE 的值大于 255，以便在后续代码中可以与 ASCII 字符一起使用，而不会与 ASCII 字符冲突。
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,TK_NEGATIVE,TK_NOEQ,
+  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,TK_NEGATIVE,TK_NOEQ,TK_AND,TK_POINTER_DEREF,TK_STRING,
 
   /* TODO: Add more token types */
 
@@ -52,14 +52,16 @@ static struct rule {
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
   {"==", TK_EQ},        // equal
-  {"!=",TK_NOEQ},           //
+  {"!=",TK_NOEQ},       // NO equal
+  {"&&",TK_AND},        // and
   {"-",'-'},            // minus
   {"\\*",'*'},          // multiplication
   {"/",'/'},            // divisions
   {"\\b[0-9]+\\b", TK_NUMBER},   //number 
   {"\\(", '('},         // 左括号
   {"\\)", ')'},         // 右括号
-  //{"([^0-9)]|^)-",TK_NEGATIVE},  //负号
+  {"[A-Za-z]+",TK_STRING},//字符串
+  
 };
 
 
@@ -227,7 +229,18 @@ word_t find_major(word_t p,word_t q)
       }
       
     }
+
+      //指针解引用处理
+    for (int i = 0; i < nr_token; i ++) 
+    {
+    if (tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type !=')' || tokens[i - 1].type !=TK_NUMBER)) ) 
+    {
+      tokens[i].type = TK_POINTER_DEREF;
+      return i;
+    }
+    }
     
+    //数字
     if (tokens[i].type ==TK_NUMBER)
     {
       continue;
@@ -258,6 +271,8 @@ word_t find_major(word_t p,word_t q)
       case '*': case '/': tmp_type = 1; break;
       case '+': case '-': tmp_type = 2; break;
       case TK_EQ:case TK_NOEQ:tmp_type=3;break;
+      case TK_AND:tmp_type=4;break;
+      //cas
       default: assert(0);
       }
       if (tmp_type>=op_type)
@@ -300,12 +315,20 @@ int32_t eval(word_t p,word_t q)
     {
       word_t op=find_major(p,q);  //主运算符的索引
       
-      int32_t val2 = eval(op + 1, q);  //可能是负数
+      int32_t val2 = eval(op + 1, q);  //可能是负数，所以先计算val2
+      //负数处理
       if(tokens[op].type==TK_NEGATIVE)
       {
         val2=-val2;
         return val2;
       }
+
+      //指针解引用
+      if(tokens[op].type==TK_POINTER_DEREF && tokens[op+1].type==TK_STRING)
+      {
+        return *tokens[op+1].str;
+      }
+      
       int32_t val1 = eval(p, op - 1);//写在后是为了防止op是负数导致eval传入的p>q
 
        switch (tokens[op].type) 
@@ -316,6 +339,7 @@ int32_t eval(word_t p,word_t q)
       case '/': return val1 / val2;
       case TK_EQ: return val1==val2;
       case TK_NOEQ:return val1!=val2;
+      case TK_AND:return val1&&val2;
       default: assert(0);
       }
     }
@@ -332,5 +356,6 @@ int32_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
+
   return eval(0,nr_token-1);
 }
