@@ -314,8 +314,8 @@ int32_t eval(word_t p,word_t q)
       case '-': return val1 - val2;
       case '*': return val1 * val2;
       case '/': return val1 / val2;
-      case TK_EQ: return 1;
-      case TK_NOEQ:return 0;
+      case TK_EQ: return val1==val2;
+      case TK_NOEQ:return val1!=val2;
       default: assert(0);
       }
     }
