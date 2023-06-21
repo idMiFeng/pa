@@ -16,7 +16,7 @@
 /*
 
 */
-
+#include <memory/paddr.h>
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
@@ -34,7 +34,7 @@ regfree()：释放编译后的正则表达式。*/
 //定义了一个枚举类型，用于表示不同的标记类型。每个标记类型都与一个整数值关联。
 //这种设置是为了确保 TK_NOTYPE 的值大于 255，以便在后续代码中可以与 ASCII 字符一起使用，而不会与 ASCII 字符冲突。
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,TK_NEGATIVE,TK_NOEQ,TK_AND,TK_POINTER_DEREF,TK_STRING,
+  TK_NOTYPE = 256, TK_EQ, TK_NUMBER,TK_NEGATIVE,TK_NOEQ,TK_AND,TK_POINTER_DEREF,TK_REG,TK_HEX,
 
   /* TODO: Add more token types */
 
@@ -60,7 +60,9 @@ static struct rule {
   {"\\b[0-9]+\\b", TK_NUMBER},   //number 
   {"\\(", '('},         // 左括号
   {"\\)", ')'},         // 右括号
-  {"[A-Za-z]+",TK_STRING},//字符串
+  //{"[A-Za-z]+",TK_STRING},//字符串
+  {"\\$(\\$0|ra|[sgt]p|t[0-6]|a[0-7]|s([0-9]|1[0-1]))", TK_REG},//寄存器
+  {"0[xX][0-9a-fA-F]+",TK_HEX},    //十六进制
   
 };
 
@@ -97,6 +99,7 @@ typedef struct token {
   int type;
   char str[32];
 } Token;
+
 
 
 
@@ -296,13 +299,39 @@ int32_t eval(word_t p,word_t q)
     
     if(p>q)
     {
+      printf("The input is wrong p>q\n");
       assert(0);
     }
     else if (p==q)
     {
+      if (tokens[p].type == TK_REG) 
+      {
       word_t num;
-      sscanf(tokens[p].str,"%d",&num);
-      return num;
+        bool t = true;
+        num = isa_reg_str2val(tokens[p].str, &t);
+        if (!t) 
+        {
+          num = 0;
+        }
+        return num;
+      }
+      else if (tokens[p].type==TK_NUMBER)
+      {
+        word_t num;
+        sscanf(tokens[p].str,"%d",&num);
+        return num;
+      }
+      else if (tokens[p].type==TK_HEX)
+      {
+        return strtol(tokens[p].str, NULL, 16);
+      }
+      else
+      {
+        printf("false when p==q");
+        return 0;
+      }
+      
+      
     }
     else if (check_parentheses(p, q) == true) 
     {
@@ -323,15 +352,12 @@ int32_t eval(word_t p,word_t q)
         return val2;
       }
 
-      //指针解引用
-      if(tokens[op].type==TK_POINTER_DEREF && tokens[op+1].type==TK_STRING)
+      //指针解引用       
+      if(tokens[op].type==TK_POINTER_DEREF)
       {
-        int p=10;
-        int* ptr=&p;
-        int a=5;
-        a=p+*ptr;
-        a++;
-        return *tokens[op+1].str;
+        //word_t* ptr = (word_t*)tokens[op+1].str;
+       //return *ptr;
+        return paddr_read(val2,4);
       }
       
       int32_t val1 = eval(p, op - 1);//写在后是为了防止op是负数导致eval传入的p>q
