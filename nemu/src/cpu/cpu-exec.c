@@ -13,11 +13,12 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
+
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-
+#include <common.h>
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -38,6 +39,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+
+#ifdef CONFIG_WATCHPOINT
+  wp_difftest();
+  return 0;
+#endif
 }
 
 static void exec_once(Decode *s, vaddr_t pc) {
@@ -97,6 +103,19 @@ void assert_fail_msg() {
 }
 
 /* Simulate how the CPU works. */
+/*这段代码是cpu_exec函数的实现，下面是对其功能的详细说明：
+首先，根据传入的参数n和预定义的MAX_INST_TO_PRINT比较，确定是否打印每条指令的执行信息。
+接着，根据当前的nemu_state.state状态进行判断：
+如果状态为NEMU_END或NEMU_ABORT，输出程序执行已结束的提示信息，并返回函数。
+否则，将nemu_state.state设置为NEMU_RUNNING表示程序正在运行。
+获取当前时间作为计时器的起始时间。
+调用execute(n)函数，执行指定数量的指令。
+执行完指定数量的指令后，获取当前时间作为计时器的结束时间，并计算指令执行的时间。
+根据nemu_state.state的值进行判断：
+如果状态为NEMU_RUNNING，将nemu_state.state设置为NEMU_STOP，表示程序执行已暂停。
+如果状态为NEMU_END或NEMU_ABORT，根据具体的状态输出相应的日志信息，并执行后续操作。
+如果状态为NEMU_QUIT，执行统计操作。
+总体来说，该函数的功能是模拟CPU的工作。它根据给定的指令数量执行相应数量的指令，并根据当前的状态进行相应的处理，包括输出提示信息、设置状态、记录执行时间以及执行统计操作。*/
 void cpu_exec(uint64_t n) {
   g_print_step = (n < MAX_INST_TO_PRINT);
   switch (nemu_state.state) {

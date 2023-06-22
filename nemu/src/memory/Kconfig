@@ -31,4 +31,15 @@ config MEM_RANDOM
   help
     This may help to find undefined behaviors.
 
+
+
+config WATCHPOINT
+  bool "Enable watchpoint"
+  default y
+  help
+    Enable watchpoint functionality. When enabled, NEMU will check for watchpoints
+    during execution, which can cause a performance overhead. You can disable this
+    option when watchpoints are not needed to improve NEMU's performance.
+
+
 endmenu #MEMORY

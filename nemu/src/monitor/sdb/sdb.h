@@ -21,3 +21,16 @@
 int32_t expr(char *e, bool *success);
 
 #endif
+
+//打印监视点
+void info_watchpoint();
+
+//设置监视点
+void wp_set(char *args, int32_t res);
+
+//删除序列号为N的监视点
+void wp_remove(int no);
+
+
+//检查遍历监视点
+void wp_difftest();

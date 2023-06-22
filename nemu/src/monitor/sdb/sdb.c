@@ -83,7 +83,12 @@ static int cmd_info(char *args){
   else if (strcmp(args, "r") == 0){
     isa_reg_display();
   }
-  
+  else if (strcmp(args,"w")==0)
+  {
+    //打印监视点状态
+    info_watchpoint();
+  }
+
   return 0;
 }
 
@@ -111,12 +116,44 @@ static int cmd_p(char *args){
   int32_t res = expr(args, &success);
   if (!success) 
   {
-    puts("invalid expression");
+    printf("invalid expression\n");
   } else 
   {
     printf("%d\n", res);
   }
   return 0; 
+}
+
+//设置监视点
+static int cmd_w(char *args){
+ if (!args)
+  {
+    printf("Usage: w EXPR\n");
+    return 0;
+  }
+  bool success;
+  int32_t res = expr(args, &success);
+  if (!success) 
+  {
+    printf("invalid expression\n");
+  } 
+  else 
+  {
+    wp_set(args, res);
+  }
+  return 0;
+}
+
+//删除序列号为N的监视点
+static int cmd_d(char *args){
+  char *arg = strtok(NULL, "");
+  if (!arg) {
+    printf("Usage: d N\n");
+    return 0;
+  }
+  int no = strtol(arg, NULL, 10);
+  wp_remove(no);
+  return 0;
 }
 
 
@@ -133,6 +170,9 @@ static struct {
   {"info","Print program status",cmd_info},
   { "x", "Usage: x N EXPR. Scan the memory from EXPR by N bytes", cmd_x },
   {"p","Expression evaluation",cmd_p},
+  { "w", "Usage: w EXPR.Set a watchpoint", cmd_w },
+  { "d", "Usage: d N. Delete watchpoint of wp.NO=N", cmd_d },
+
 
   /* TODO: Add more commands */
 
