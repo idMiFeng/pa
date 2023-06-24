@@ -32,5 +32,3 @@ void wp_set(char *args, int32_t res);
 void wp_remove(int no);
 
 
-//检查遍历监视点
-void wp_difftest();

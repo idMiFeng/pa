@@ -16,6 +16,10 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+
+
+
+
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdbool.h>
@@ -47,3 +51,7 @@ typedef uint16_t ioaddr_t;
 #include <debug.h>
 
 #endif
+
+
+//检查遍历监视点
+void wp_difftest();
