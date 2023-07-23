@@ -47,6 +47,11 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
 }
 
+
+/*在execute函数（在cpu_exec中调用）中调用
+主要作用是执行一次指令，并更新PC的值。它接收一个Decode结构体指针s和一个指令的PC值作为参数，
+将PC值保存到s->pc和s->snpc中，然后调用isa_exec_once()执行指令，最后将执行后的动态下一条指令的PC值赋给cpu.pc。
+整个过程涵盖了指令周期的各个阶段，实现了指令的执行和PC的更新。*/
 static void exec_once(Decode *s, vaddr_t pc) {
   s->pc = pc;
   s->snpc = pc;
@@ -78,6 +83,9 @@ static void exec_once(Decode *s, vaddr_t pc) {
 #endif
 }
 
+
+
+//在cpu_exec中调用
 static void execute(uint64_t n) {
   Decode s;
   for (;n > 0; n --) {
@@ -89,6 +97,8 @@ static void execute(uint64_t n) {
   }
 }
 
+
+
 static void statistic() {
   IFNDEF(CONFIG_TARGET_AM, setlocale(LC_NUMERIC, ""));
 #define NUMBERIC_FMT MUXDEF(CONFIG_TARGET_AM, "%", "%'") PRIu64
@@ -97,6 +107,8 @@ static void statistic() {
   if (g_timer > 0) Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
   else Log("Finish running in less than 1 us and can not calculate the simulation frequency");
 }
+
+
 
 void assert_fail_msg() {
   isa_reg_display();

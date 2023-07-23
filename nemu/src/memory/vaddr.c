@@ -16,6 +16,7 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+//vaddr_ifetch()又会通过paddr_read()来访问物理内存中的内容
 word_t vaddr_ifetch(vaddr_t addr, int len) {
   return paddr_read(addr, len);
 }

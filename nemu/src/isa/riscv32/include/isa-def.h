@@ -24,6 +24,10 @@ typedef struct {
 } riscv32_CPU_state;
 
 // decode
+/*这段代码定义了一个名为riscv32_ISADecodeInfo的结构体。它包含一个成员变量inst，是一个union类型，用于存储指令的值。
+inst：是一个union类型，包含一个成员变量val，类型为uint32_t，用于存储指令的32位值。
+这个结构体主要用于存储RISC-V 32位指令集相关的解码信息。它在指令解析的过程中被使用，以便能够获取指令的具体操作码和操作数等信息。
+*/
 typedef struct {
   union {
     uint32_t val;

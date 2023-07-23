@@ -18,6 +18,19 @@
 
 #include <isa.h>
 
+/*这段代码定义了一个名为Decode的结构体。它包含以下成员变量：
+
+pc：表示当前指令的程序计数器（Program Counter）的值，即指令的地址。
+
+snpc：表示静态下一条指令的程序计数器的值，即下一条指令的地址。在执行一条指令之前，将当前指令的地址赋给snpc，作为静态下一条指令的地址。
+
+dnpc：表示动态下一条指令的程序计数器的值，即执行完当前指令后，下一条要执行的指令的地址。这个值会在执行指令的过程中根据指令的具体操作进行计算，并在执行完指令后更新。
+
+isa：类型为ISADecodeInfo的结构体，用于存储与指令集相关的信息。具体的定义可以在nemu/src/isa/$ISA/include/isa-def.h中找到。
+
+logbuf：大小为128的字符数组，用于记录跟踪信息。它是一个条件编译的宏，当定义了CONFIG_ITRACE时才会包含在结构体中。
+
+这个Decode结构体在NEMU中用于存储指令的解码信息以及相关的PC值。它是模拟器中指令执行过程中的重要数据结构之一。*/
 typedef struct Decode {
   vaddr_t pc;
   vaddr_t snpc; // static next pc
@@ -27,6 +40,8 @@ typedef struct Decode {
 } Decode;
 
 // --- pattern matching mechanism ---
+/*__attribute__((always_inline))是GCC编译器的函数属性之一，用于指示编译器始终将函数进行内联展开。
+内联展开是一种编译器优化技术，它将函数调用处的函数体直接嵌入到调用的位置，而不是通过跳转到函数体执行。这样可以减少函数调用的开销，包括栈帧的创建和销毁、参数传递和返回值处理等。*/
 __attribute__((always_inline))
 static inline void pattern_decode(const char *str, int len,
     uint64_t *key, uint64_t *mask, uint64_t *shift) {
@@ -96,7 +111,19 @@ finish:
   } \
 } while (0)
 
+
+/*该宏定义了一个起始位置的标签，并声明了一个指向该标签的指针__instpat_end。其中，name是传入的参数，用于给标签命名。
+
+&&是GCC编译器提供的标签地址扩展功能，它可以获取标签的地址。
+
+concat(__instpat_end_, name)是一个宏展开操作，将__instpat_end_和name拼接在一起，生成新的标签名称。
+
+整个宏定义的目的是创建一个指向起始标签的指针，并且使用一个特定的命名规则来确保每个模式匹配起始位置的唯一性。
+
+这个起始位置的标签和指针将在后续的模式匹配过程中使用，用于跳转到下一个模式匹配的结束位置。*/
 #define INSTPAT_START(name) { const void ** __instpat_end = &&concat(__instpat_end_, name);
+
+
 #define INSTPAT_END(name)   concat(__instpat_end_, name): ; }
 
 #endif

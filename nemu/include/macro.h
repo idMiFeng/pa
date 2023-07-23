@@ -29,6 +29,7 @@
 #define ARRLEN(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
 // macro concatenation
+//concat_temp 宏的作用是将两个标记或宏参数连接在一起形成一个新的标记。它主要用于在编译时生成新的标识符或名称。
 #define concat_temp(x, y) x ## y
 #define concat(x, y) concat_temp(x, y)
 #define concat3(x, y, z) concat(concat(x, y), z)
@@ -84,7 +85,18 @@
 #define MAP(c, f) c(f)
 
 #define BITMASK(bits) ((1ull << (bits)) - 1)
-#define BITS(x, hi, lo) (((x) >> (lo)) & BITMASK((hi) - (lo) + 1)) // similar to x[hi:lo] in verilog
+
+/*具体来说，宏定义 BITS(x, hi, lo) 接受三个参数：
+
+x：表示要提取位的整数。
+hi：表示高位的位置。
+lo：表示低位的位置。
+该宏会将整数 x 向右移动 lo 位，然后使用位掩码（bitmask） BITMASK((hi) - (lo) + 1) 对结果进行按位与操作，以提取指定位范围内的值。位掩码 BITMASK((hi) - (lo) + 1) 用于生成一个只有指定位范围内位全为1，其它位全为0的掩码。
+similar to x[hi:lo] in verilog
+类似于 Verilog 中的表达式 x[hi:lo]，该宏定义实现了类似的功能，即提取整数 x 中从 hi 到 lo 位的值。*/
+#define BITS(x, hi, lo) (((x) >> (lo)) & BITMASK((hi) - (lo) + 1)) 
+
+
 #define SEXT(x, len) ({ struct { int64_t n : len; } __x = { .n = x }; (uint64_t)__x.n; })
 
 #define ROUNDUP(a, sz)   ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
