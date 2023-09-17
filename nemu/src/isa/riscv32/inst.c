@@ -58,8 +58,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     src2R(); // 使用辅助宏获取源寄存器2的值
     break;
 
-    case TYPE_J: // 添加对 J 型指令的支持
-    immI();  // 使用辅助宏获取立即数
+    
     break;
 
     default:
