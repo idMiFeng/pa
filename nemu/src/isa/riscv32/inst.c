@@ -52,6 +52,19 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_I: src1R();          immI(); break; //框架代码定义了src1R()和src2R()两个辅助宏, 用于寄存器的读取结果记录到相应的操作数变量中
     case TYPE_U:                   immU(); break;//immI等辅助宏, 用于从指令中抽取出立即数
     case TYPE_S: src1R(); src2R(); immS(); break;
+    
+    case TYPE_R: // 添加对 R 型指令的支持
+    src1R(); // 使用辅助宏获取源寄存器1的值
+    src2R(); // 使用辅助宏获取源寄存器2的值
+    break;
+
+    case TYPE_J: // 添加对 J 型指令的支持
+    immI();  // 使用辅助宏获取立即数
+    break;
+
+    default:
+    // 处理其他指令类型
+    break;
   }
 }
 
