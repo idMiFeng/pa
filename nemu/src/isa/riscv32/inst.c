@@ -32,7 +32,7 @@ enum {
 #define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
 #define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
-
+#define immJ() do { *imm = SEXT(BITS(i, 31, 31), 1) << 19 | ((SEXT(BITS(i, 19, 12), 8) << 56) >> 56) << 11 | ((SEXT(BITS(i, 20, 20), 1) << 63) >> 63) << 10 | (((SEXT(BITS(i, 30, 21), 10) << 54) >> 54) << 22) >> 22; *imm = *imm << 1; } while (0)
 
 /*在decode_exec函数中调用
 首先从 s->isa.inst.val 中获取当前指令的值，存储在变量 i 中。
@@ -52,7 +52,7 @@ static void decode_operand(Decode *s, int *rd, word_t *src1, word_t *src2, word_
     case TYPE_I: src1R();          immI(); break; //框架代码定义了src1R()和src2R()两个辅助宏, 用于寄存器的读取结果记录到相应的操作数变量中
     case TYPE_U:                   immU(); break;//immI等辅助宏, 用于从指令中抽取出立即数
     case TYPE_S: src1R(); src2R(); immS(); break;
-   
+    case TYPE_J:                   immJ(); break; // J型指令的寄存器编号rd已经由dest接受，只需得到jal的重排之后的立即数
   }
 }
 
