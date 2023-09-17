@@ -31,8 +31,6 @@ static void restart() {
 
   /* The zero register is always 0. */
   cpu.gpr[0] = 0;
-  // sp 初始应该为0x80000000
-  cpu.gpr[2] = CONFIG_MBASE;
 }
 
 void init_isa() {
