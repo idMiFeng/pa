@@ -13,7 +13,7 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-
+#include <cpu/ifetch.h>
 
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
@@ -111,6 +111,9 @@ static void statistic() {
 
 
 void assert_fail_msg() {
+  //取指令，物理访问约界时调用
+  display_inst();
+  
   isa_reg_display();
   statistic();
 }

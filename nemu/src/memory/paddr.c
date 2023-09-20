@@ -17,7 +17,7 @@
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
-
+#include <common.h>
 #if   defined(CONFIG_PMEM_MALLOC)
 static uint8_t *pmem = NULL;
 #else // CONFIG_PMEM_GARRAY
@@ -80,6 +80,7 @@ void init_mem() {
 3.如果既不在物理内存范围内，也没有启用设备内存映射，则调用out_of_bound(addr)函数，该函数会抛出一个错误，表示给定的地址超出了内存范围。
 4.最后，如果以上情况都不满足，函数会返回0作为默认值。*/
 word_t paddr_read(paddr_t addr, int len) {
+  IFDEF(CONFIG_MTRACE,display_pread(addr,len));
   if (likely(in_pmem(addr))) return pmem_read(addr, len);
   IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
   out_of_bound(addr);
@@ -89,6 +90,7 @@ word_t paddr_read(paddr_t addr, int len) {
 
 
 void paddr_write(paddr_t addr, int len, word_t data) {
+  IFDEF(CONFIG_MTRACE,display_pwrite(addr,len,data));
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);

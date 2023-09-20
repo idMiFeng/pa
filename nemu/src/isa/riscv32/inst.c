@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
+#include <common.h>
 
 #define R(i) gpr(i)
 #define Mr vaddr_read
@@ -107,7 +108,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi, I, R(rd) =src1 + imm);
 
     // 添加对 jal 指令的支持
-  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J,  R(rd) = s->pc+4; s->dnpc = s->pc + imm);
+  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal, J,  R(rd) = s->pc+4;s->snpc+=4; s->dnpc = s->pc + imm);
   
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr , I, s->dnpc = (src1 + imm)& ~(word_t)1; R(rd) = s->pc+4);
 
@@ -176,5 +177,7 @@ decode_exec(s)：调用decode_exec函数，将指令解码并执行。该函数�
 函数isa_exec_once的返回值是decode_exec函数的返回值，用于指示指令执行的结果。具体的解码和执行过程在decode_exec函数中实现，*/
 int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
+  //在编译时配置文件中定义了 CONFIG_ITRACE 宏，那么 trace_inst 函数会在代码中被调用，存指令
+  IFDEF(CONFIG_ITRACE,trace_inst(s->pc,s->isa.inst.val));
   return decode_exec(s);
 }

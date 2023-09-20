@@ -7,7 +7,7 @@ html:
 
 ## 1. Basic Setup and Checks
 
-### Default to create a bare-metal kernel image
+### Default to create a bare-metal kernel image 默认情况下，如果没有指定构建目标，将创建一个裸机内核映像
 ifeq ($(MAKECMDGOALS),)
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
