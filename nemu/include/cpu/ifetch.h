@@ -37,7 +37,6 @@ static inline uint32_t inst_fetch(vaddr_t *pc, int len) {
 #endif
 
 
-#define MAX_IRINGBUF 16
 
 
 
@@ -52,7 +51,7 @@ typedef struct{
 }ItraceNode;
 
 //环形缓冲区
-ItraceNode iringbuf[MAX_IRINGBUF];
+ItraceNode iringbuf[16];
 
 int p_cur=0;
 bool full=false;
@@ -61,7 +60,7 @@ bool full=false;
 void trace_inst(word_t pc,uint32_t inst){
     iringbuf[p_cur].pc=pc;
     iringbuf[p_cur].inst=inst;
-    p_cur=(p_cur+1)%MAX_IRINGBUF;
+    p_cur=(p_cur+1)%16;
     full=full || p_cur==0;
 }
 
@@ -71,7 +70,7 @@ void display_inst(){
         return;
     }
      int start = 0;
-    int end = full ? MAX_IRINGBUF : p_cur;
+    int end = full ? 16 : p_cur;
 
     // 遍历环形缓冲区，从 start 到 end，打印存储的指令
     for (int i = start; i < end; i++) {
