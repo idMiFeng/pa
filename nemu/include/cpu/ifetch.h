@@ -40,6 +40,7 @@ static inline uint32_t inst_fetch(vaddr_t *pc, int len) {
 #define MAX_IRINGBUF 16
 
 
+
 void trace_inst(word_t pc,uint32_t inst);
 void display_inst();
 void display_pread(paddr_t addr,int len);
