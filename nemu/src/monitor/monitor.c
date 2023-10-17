@@ -70,10 +70,13 @@ static long load_img()
   return size;
 }
 
+static char *elf_file=NULL;
 static int parse_args(int argc, char *argv[])
 {
   const struct option table[] = {
-      {"batch", no_argument, NULL, 'b'},
+      //传入elf文件
+      {"elf",required_argument,NULL,'e'},
+      {"batch", no_argument, NULL, 'b'},//如果解析到 -b 或 --batch 选项，会调用 sdb_set_batch_mode() 函数来设置批处理模式。
       {"log", required_argument, NULL, 'l'},
       {"diff", required_argument, NULL, 'd'},
       {"port", required_argument, NULL, 'p'},
@@ -81,10 +84,13 @@ static int parse_args(int argc, char *argv[])
       {0, 0, NULL, 0},
   };
   int o;
-  while ((o = getopt_long(argc, argv, "-bhl:d:p:", table, NULL)) != -1)
+  while ((o = getopt_long(argc, argv, "-bhl:d:p:e", table, NULL)) != -1)
   {
     switch (o)
     {
+    case 'e':
+    elf_file=optarg;
+    break;
     case 'b':
       sdb_set_batch_mode();
       break;
@@ -102,6 +108,7 @@ static int parse_args(int argc, char *argv[])
       return 0;
     default:
       printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
+      printf("\t-e,--elf=FILE           elf file to be parsed\n");
       printf("\t-b,--batch              run with batch mode\n");
       printf("\t-l,--log=FILE           output log to FILE\n");
       printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");

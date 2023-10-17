@@ -79,3 +79,6 @@ int      atomic_xchg (int *addr, int newval);
 #endif
 
 #endif
+
+
+static inline uint32_t inl(uint16_t port);
