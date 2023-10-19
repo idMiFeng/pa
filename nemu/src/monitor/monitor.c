@@ -83,7 +83,27 @@ static int parse_args(int argc, char *argv[])
       {"help", no_argument, NULL, 'h'},
       {0, 0, NULL, 0},
   };
+  /*name：表示长选项的名称，例如，--help。
+has_arg：表示选项是否需要参数，可以是no_argument（无参数）、required_argument（必须有参数）或optional_argument（可选参数）。
+flag：如果不为空，指向一个整数，用于存储选项的返回值。如果为NULL，getopt_long将返回选项的返回值。
+val：选项的返回值。通常是一个字符或整数。*/
   int o;
+  //在getopt_long的使用中，程序会循环调用该函数来处理每个命令行参数，根据解析的选项和参数进行相应的操作
+  /*int getopt_long(int argc, char *const argv[], const char *optstring, const struct option *longopts, int *longindex);
+参数说明：
+
+argc：命令行参数的数量，通常是 main 函数的参数 argc。
+argv：命令行参数的数组，通常是 main 函数的参数 argv。
+optstring：一个包含短选项字符的字符串，用于指示哪些选项需要参数，哪些选项不需要参数。类似于传统的 getopt 函数的用法。
+longopts：一个指向 struct option 结构数组的指针，定义了长选项的信息，包括名称、是否需要参数、短选项等。
+longindex：一个指向整数的指针，用于存储当前解析的长选项在 longopts 数组中的索引。通常可以为 NULL，如果不需要获得索引信息
+-bhl:d:p:e是 optstring 参数
+-b：不需要参数。这是一个标志选项，用于表示批处理模式。
+-h：不需要参数。这通常表示帮助选项，用于显示帮助信息。
+-l：需要参数。接下来的参数应该是一个日志文件的路径。
+-d：需要参数。接下来的参数应该是差分测试的引用共享库文件的路径。
+-p：需要参数。接下来的参数应该是差分测试的端口号。
+-e：需要参数。接下来的参数应该是一个 ELF 文件的路径。*/
   while ((o = getopt_long(argc, argv, "-bhl:d:p:e", table, NULL)) != -1)
   {
     switch (o)
@@ -124,7 +144,7 @@ void init_monitor(int argc, char *argv[])
 {
   /* Perform some global initialization. */
 
-  /* Parse arguments. */
+  /* Parse arguments. *///这个函数用于解析命令行参数，argc是参数计数，argv是参数数组。它会解析并记录命令行参数，以便在后续的初始化和运行过程中使用。
   parse_args(argc, argv);
 
   /* Set random seed. */
@@ -133,7 +153,7 @@ void init_monitor(int argc, char *argv[])
   /* Open the log file. */
   init_log(log_file);
 
-  /* Initialize memory. */
+  /* Initialize memory. *///初始化内存，为程序运行提供了内存空间
   init_mem();
 
   /* Initialize devices. */

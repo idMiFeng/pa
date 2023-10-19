@@ -4,7 +4,7 @@ static Context* do_event(Event e, Context* c) {
   switch (e.event) {
     default: panic("Unhandled event ID = %d", e.event);
   }
-
+  //返回输入的上下文 c，表示处理事件后的上下文状态。
   return c;
 }
 

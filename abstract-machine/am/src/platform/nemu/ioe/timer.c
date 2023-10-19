@@ -2,11 +2,6 @@
 #include <nemu.h>
 #include <stdint.h>  // 用于 uint32_t 类型
 
-static inline uint32_t inl(uint16_t port) {
-    uint32_t data;
-    asm volatile ("lr.w %0, (%1)" : "=r"(data) : "r"(port));
-    return data;
-}
 
 
 void __am_timer_init() {

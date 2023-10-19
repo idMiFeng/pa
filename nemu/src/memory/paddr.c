@@ -26,8 +26,9 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};//PG_ALIGNi对齐方式,它告�
 #endif
 
 
-//paddr_t等价uint64_t
-uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }//CONFIG_MBASE起始地址
+//paddr_t等价uint64_t,uint8_t* guest_to_host(paddr_t paddr)：它接受一个虚拟内存地址 paddr，并返回一个指向主机内存地址的 uint8_t 指针
+uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }//CONFIG_MBASE物理内存的起始地址
+
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }//反过来
 /*地址映射是一种将逻辑地址（由CPU生成）映射到物理地址（实际存储器中的地址）的过程对于给定的物理地址 paddr，我们要求的是逻辑地址,该函数通过以下步骤进行映射：
 1.计算偏移量：将物理地址 paddr 减去 CONFIG_MBASE。CONFIG_MBASE 是一个基准地址，用于表示内存的起始地址。
