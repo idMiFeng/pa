@@ -215,11 +215,12 @@ void sdb_set_batch_mode() {
 
 //主循环在这里定义//////////////////////////////////////////////////////////////////////////////
 void sdb_mainloop() {
+  //检查是否处于批处理模式
   if (is_batch_mode) {
     cmd_c(NULL);
     return;
   }
-
+//用户输入的命令以字符串形式存储在str中，然后使用strtok()函数从字符串中提取第一个标记作为命令（cmd）。
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
 
