@@ -111,7 +111,7 @@ static void statistic() {
 
 void assert_fail_msg() {
   //取指令，物理访问约界时调用
-  display_inst();
+  //display_inst();
   
   isa_reg_display();
   statistic();
