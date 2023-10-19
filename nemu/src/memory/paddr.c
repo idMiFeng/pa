@@ -64,8 +64,10 @@ void init_mem() {
   assert(pmem);
 #endif
 #ifdef CONFIG_MEM_RANDOM
+  //p 现在指向了物理内存的起始位置。
   uint32_t *p = (uint32_t *)pmem;
   int i;
+  //模拟程序的初始内存内容，其中内存中的每个位置都包含随机的数据
   for (i = 0; i < (int) (CONFIG_MSIZE / sizeof(p[0])); i ++) {
     p[i] = rand();
   }

@@ -220,6 +220,7 @@ void sdb_mainloop() {
     cmd_c(NULL);
     return;
   }
+  //rl_gets()函数获取用户在命令行中输入的文本。这个文本通常包括一个命令和可能的参数。
 //用户输入的命令以字符串形式存储在str中，然后使用strtok()函数从字符串中提取第一个标记作为命令（cmd）。
   for (char *str; (str = rl_gets()) != NULL; ) {
     char *str_end = str + strlen(str);
@@ -232,6 +233,7 @@ void sdb_mainloop() {
      * which may need further parsing
      */
     char *args = cmd + strlen(cmd) + 1;
+    //如果args的起始位置超过了输入文本的末尾位置（args >= str_end），则将参数设为NULL。这可能发生在用户只输入了命令而没有参数的情况下。
     if (args >= str_end) {
       args = NULL;
     }
@@ -243,6 +245,7 @@ void sdb_mainloop() {
 
     int i;
     for (i = 0; i < NR_CMD; i ++) {
+      //如果找到匹配的命令，它会调用相应的处理函数，并将参数传递给它。如果处理函数返回小于0的值，表示需要退出，此时循环结束，程序退出。
       if (strcmp(cmd, cmd_table[i].name) == 0) {
         if (cmd_table[i].handler(args) < 0) { return; }
         break;
