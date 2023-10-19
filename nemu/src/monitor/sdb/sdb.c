@@ -105,7 +105,7 @@ static int cmd_x(char *args){
 	sscanf(args,"%d%x",&N,&startAddress);
 	for (int i = 0;i < N;i ++){
       printf("%x\n", paddr_read(startAddress,4));
-      startAddress += 4;
+      startAddress += 1;
   
   }
    return 0;
