@@ -183,6 +183,13 @@ config DIFFTEST_REF_PATH
   default "tools/spike-diff" if DIFFTEST_REF_SPIKE
   default "none"
 
+#监视点
+config WATCHPOINT
+bool "Enable watchpoint"
+default n
+help
+  Enable watchpoint feature to monitor memory access.
+
 config DIFFTEST_REF_NAME
   string
   default "qemu" if DIFFTEST_REF_QEMU

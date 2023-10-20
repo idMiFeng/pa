@@ -128,7 +128,7 @@ void assert_fail_msg() {
 执行完指定数量的指令后，获取当前时间作为计时器的结束时间，并计算指令执行的时间。
 根据nemu_state.state的值进行判断：
 如果状态为NEMU_RUNNING，将nemu_state.state设置为NEMU_STOP，表示程序执行已暂停。
-如果状态为NEMU_END或NEMU_ABORT，根据具体的状态输出相应的日志信息，并执行后续操作。
+如果状态为NEMU_END或NEMU_ABORT，根据具体的状态输出相应的日志信息，提示程序是否执行成功。
 如果状态为NEMU_QUIT，执行统计操作。
 总体来说，该函数的功能是模拟CPU的工作。它根据给定的指令数量执行相应数量的指令，并根据当前的状态进行相应的处理，包括输出提示信息、设置状态、记录执行时间以及执行统计操作。*/
 void cpu_exec(uint64_t n) {
@@ -156,7 +156,7 @@ void cpu_exec(uint64_t n) {
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
-      // fall through
+      // statistic()这个函数用于记录关于模拟器性能和运行状态的信息，例如主机运行时间、总指令数和模拟频率。这些信息对于性能分析和调试非常有用。
     case NEMU_QUIT: statistic();
   }
 }
