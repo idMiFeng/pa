@@ -86,6 +86,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   isa_exec_once(s);
   cpu.pc = s->dnpc;
 #ifdef CONFIG_ITRACE
+  strcpy(iringbuf[iringbuf_index] + IRING_BUF_PC_START_INDEX, s->logbuf);
+iringbuf_index = (iringbuf_index + 1) % IRING_BUF_SIZE;
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
   int ilen = s->snpc - s->pc;
@@ -100,8 +102,7 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-  strcpy(iringbuf[iringbuf_index] + IRING_BUF_PC_START_INDEX, s->logbuf);
-iringbuf_index = (iringbuf_index + 1) % IRING_BUF_SIZE;
+
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
