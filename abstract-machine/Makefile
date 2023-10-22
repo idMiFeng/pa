@@ -1,55 +1,25 @@
 # Makefile for AbstractMachine Kernels and Libraries
 
 ### *Get a more readable version of this Makefile* by `make html` (requires python-markdown)
-#这个 Makefile 片段定义了一个名为 "html" 的规则，用于生成 HTML 版本的当前 Makefile
 html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
 
-
-
-#Makefile 中的变量可以从多个地方获取值：\
-Makefile 内部设置： 可能在 Makefile 的其他地方设置了 $(AM_HOME) 变量，但你在当前查看的部分没有找到。\
-外部设置： $(AM_HOME) 可能是在调用 Make 命令时通过命令行参数设置的，例如：\
-javascript\
-Copy code\
-make AM_HOME=/path/to/abstractmachine\
-这样会将 $(AM_HOME) 变量设置为 /path/to/abstractmachine。\
-Shell 环境变量： Make 可以访问系统环境变量。如果 $(AM_HOME) 没有在 Makefile 中显式设置，它可能会从操作系统的环境变量中获取值。\
-要确定 $(AM_HOME) 变量的来源，你可以搜索整个项目，包括 Makefile 文件以及调用 Make 命令的方式。通常，这个变量会在项目的某个地方设置，以指示 Make 如何定位 AbstractMachine 代码库。
-
-
 ## 1. Basic Setup and Checks
 
-### Default to create a bare-metal kernel image 默认情况下，如果没有指定构建目标，将创建一个裸机内核映像
-#这是一个条件语句，用于检查是否有指定的构建目标。$(MAKECMDGOALS) 是一个特殊的变量，它包含了用户在命令行中指定的构建目标。
+### Default to create a bare-metal kernel image
 ifeq ($(MAKECMDGOALS),)
-#如果上述条件为真，即没有指定构建目标，那么这一行会将变量 MAKECMDGOALS 设置为 "image"。
-#一般来说，MAKECMDGOALS 用于获取用户在命令行上指定的目标，而 .DEFAULT_GOAL 用于设置默认的构建目标。
-#设置它们都是为了确保在没有明确指定目标时，有一个默认的目标可以被构建。
   MAKECMDGOALS  = image
   .DEFAULT_GOAL = image
 endif
 
 ### Override checks when `make clean/clean-all/html`
-#假设用户在命令行中运行以下命令之一：
-#make clean: 清理项目，删除临时文件等。
-#make clean-all: 清理项目，删除所有生成的文件。
-#make html: 生成 HTML 版本的 Makefile。
-#那么这段代码将会执行相应的操作。
 ifeq ($(findstring $(MAKECMDGOALS),clean|clean-all|html),)
 
 ### Print build info message
-#$(info ...)：$(info) 是一个 Makefile 内置函数，用于输出信息消息到标准输出（通常是终端）。
-# Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)]：这是要输出的信息消息的文本内容。它包含了以下变量：
-#$(NAME)：这是一个在 Makefile 中定义的变量，通常用于表示构建的项目名称。
-#$(MAKECMDGOALS)：这是一个包含用户在命令行上指定的构建目标的变量。
-#$(ARCH)：这是另一个在 Makefile 中定义的变量，通常表示目标体系结构或架构。
 $(info # Building $(NAME)-$(MAKECMDGOALS) [$(ARCH)])
 
 ### Check: environment variable `$AM_HOME` looks sane
-#$(wildcard ...) 是一个 Makefile 函数，用于查找文件系统中的文件。在这里，它用于检查 $(AM_HOME)/am/include/am.h 文件是否存在。
-#如果 am.h 文件不存在，条件为真，执行下面的操作。
 ifeq ($(wildcard $(AM_HOME)/am/include/am.h),)
   $(error $$AM_HOME must be an AbstractMachine repo)
 endif
