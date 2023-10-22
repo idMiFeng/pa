@@ -28,7 +28,7 @@
 ///////////////////iringbuf
 #define IRING_BUF_SIZE 16       		// 环形缓冲区大小
 #define IRING_BUF_PC_START_INDEX 4    	// 存放指令信息的开始位置
-static char iringbuf[IRING_BUF_SIZE][128 + IRING_BUF_PC_START_INDEX];   // 环形缓冲区 
+static char iringbuf[IRING_BUF_SIZE][128 + IRING_BUF_PC_START_INDEX+1];   // 环形缓冲区 
 static size_t iringbuf_index = 0;    	// 当前指令占据的位置
 static void print_iringbuf() {
   char prefix[IRING_BUF_PC_START_INDEX] = "-->";
