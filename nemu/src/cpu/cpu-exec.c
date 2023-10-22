@@ -28,7 +28,7 @@
 ///////////////////iringbuf
 #define IRING_BUF_SIZE 16       		// 环形缓冲区大小
 #define IRING_BUF_PC_START_INDEX 4    	// 存放指令信息的开始位置
-static char iringbuf[IRING_BUF_SIZE][128 + IRING_BUF_PC_START_INDEX+1];   // 环形缓冲区 
+static char iringbuf[IRING_BUF_SIZE][128 + IRING_BUF_PC_START_INDEX];   // 环形缓冲区 
 static size_t iringbuf_index = 0;    	// 当前指令占据的位置
 static void print_iringbuf() {
   char prefix[IRING_BUF_PC_START_INDEX] = "-->";
@@ -37,7 +37,7 @@ static void print_iringbuf() {
     if (iringbuf[i][IRING_BUF_PC_START_INDEX] == '\0') {
       break;
     }
-    if ((i + 1) % IRING_BUF_SIZE == iringbuf_index) {
+    if ((i ) % IRING_BUF_SIZE == iringbuf_index) {
       strncpy(iringbuf[i], prefix, strlen(prefix)); 
     }
 #ifdef CONFIG_ITRACE_COND

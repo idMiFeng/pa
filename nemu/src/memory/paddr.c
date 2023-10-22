@@ -76,6 +76,31 @@ void init_mem() {
 }
 
 
+//内存访问的踪迹 - mtrace
+#ifdef CONFIG_MTRACE_COND
+static char mtrace[128];
+static const char memory_access_type[2][3] = {"Mw", "Mr"};
+#endif
+#ifdef CONFIG_MTRACE
+static void memory_access_trace(paddr_t addr, int len, int data, int flag) {
+  strncpy(mtrace, memory_access_type[flag], 2);
+  memset(mtrace + 2, ' ', 4);
+  char *p = mtrace + 6;
+  p += snprintf(p, sizeof(mtrace) - 6, FMT_WORD "    ", addr);
+  p += snprintf(p, mtrace  + sizeof(mtrace) - p, "%2d""    ", len);
+  int i;
+  uint8_t *data_ptr = (uint8_t *)&data;
+  for (i = len - 1; i >= 0; i --) {
+    p += snprintf(p, 4, " %02x", data_ptr[i]);
+  }
+  *p = '\0';
+#ifdef CONFIG_MTRACE_COND
+  if (MTRACE_COND) { log_write("%s\n", mtrace); }
+#endif
+  puts(mtrace);
+}
+#endif
+
 
 
 /*1.首先，使用in_pmem(addr)函数检查给定的物理地址是否在合法的内存范围内。如果在范围内，说明要读取的地址是在物理内存中，那么调用pmem_read(addr, len)函数来从pmem数组中读取对应地址和长度的内存值，并将其返回。
@@ -83,17 +108,27 @@ void init_mem() {
 3.如果既不在物理内存范围内，也没有启用设备内存映射，则调用out_of_bound(addr)函数，该函数会抛出一个错误，表示给定的地址超出了内存范围。
 4.最后，如果以上情况都不满足，函数会返回0作为默认值。*/
 word_t paddr_read(paddr_t addr, int len) {
-  IFDEF(CONFIG_MTRACE,display_pread(addr,len));
-  if (likely(in_pmem(addr))) return pmem_read(addr, len);
-  IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
+  if (likely(in_pmem(addr))) {
+#ifdef CONFIG_MTRACE
+    word_t data = pmem_read(addr, len);
+    memory_access_trace(addr, len, data, 1);
+    return data;
+#else
+    return pmem_read(addr, len);
+#endif
+  }
+  IFDEF(CONFIG_DEVICE, IFDEF(CONFIG_MTRACE, word_t data = mmio_read(addr, len);memory_access_trace(addr, len, data, 1);return data;) return mmio_read(addr, len));
+#ifdef CONFIG_MTRACE
+  memory_access_trace(addr, len, -1, 1);
+#endif
   out_of_bound(addr);
   return 0;
 }
 
-
-
 void paddr_write(paddr_t addr, int len, word_t data) {
-  IFDEF(CONFIG_MTRACE,display_pwrite(addr,len,data));
+#ifdef CONFIG_MTRACE
+  memory_access_trace(addr, len, data, 0);
+#endif
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
