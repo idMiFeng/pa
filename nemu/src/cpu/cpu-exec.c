@@ -37,7 +37,7 @@ static void print_iringbuf() {
     if (iringbuf[i][IRING_BUF_PC_START_INDEX] == '\0') {
       break;
     }
-    if ((i -1) % IRING_BUF_SIZE == iringbuf_index) {
+    if ((i +1) % IRING_BUF_SIZE == iringbuf_index) {
       strncpy(iringbuf[i], prefix, strlen(prefix)); 
     }
 #ifdef CONFIG_ITRACE_COND
