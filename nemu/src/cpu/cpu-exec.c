@@ -24,6 +24,35 @@
  * This is useful when you use the `si' command.
  * You can modify this value as you want.
  */
+
+///////////////////iringbuf
+#define IRING_BUF_SIZE 16       		// 环形缓冲区大小
+#define IRING_BUF_PC_START_INDEX 3    	// 存放指令信息的开始位置
+static char iringbuf[IRING_BUF_SIZE][200 + IRING_BUF_PC_START_INDEX];   // 环形缓冲区 
+static size_t iringbuf_index = 0;    	// 当前指令占据的位置
+static void print_iringbuf() {
+  char prefix[IRING_BUF_PC_START_INDEX+1] = "-->";
+  prefix[IRING_BUF_PC_START_INDEX]='\0';
+  for (int i = 0; i < IRING_BUF_SIZE; ++i) {
+    if (iringbuf[i][IRING_BUF_PC_START_INDEX] == '\0') {
+      break;
+    }
+    if ((i + 1) % IRING_BUF_SIZE == iringbuf_index) {
+      strncpy(iringbuf[i], prefix, strlen(prefix)); 
+    }
+#ifdef CONFIG_ITRACE_COND
+  if (ITRACE_COND) { log_write("%s\n", iringbuf[i]); }
+#endif
+    printf("%s\n", iringbuf[i]);
+  }
+  return;
+}
+
+///////////////////
+
+
+
+
 #define MAX_INST_TO_PRINT 10
 
 CPU_state cpu = {};
@@ -71,7 +100,8 @@ static void exec_once(Decode *s, vaddr_t pc) {
   space_len = space_len * 3 + 1;
   memset(p, ' ', space_len);
   p += space_len;
-
+  strcpy(iringbuf[iringbuf_index] + IRING_BUF_PC_START_INDEX, s->logbuf);
+iringbuf_index = (iringbuf_index + 1) % IRING_BUF_SIZE;
 #ifndef CONFIG_ISA_loongarch32r
   void disassemble(char *str, int size, uint64_t pc, uint8_t *code, int nbyte);
   disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
@@ -139,9 +169,16 @@ void cpu_exec(uint64_t n) {
       return;
     default: nemu_state.state = NEMU_RUNNING;
   }
+  ///////初始化环形缓冲区
+  iringbuf_index = 0;
+for (int i = 0; i < IRING_BUF_SIZE; ++i) {
+   memset(iringbuf[i], ' ', IRING_BUF_PC_START_INDEX);  // 前几个位置初始化为空格
+   iringbuf[i][IRING_BUF_PC_START_INDEX] = '\0';
+}
+////////
 
   uint64_t timer_start = get_time();
-
+  
   execute(n);
 
   uint64_t timer_end = get_time();
@@ -151,6 +188,7 @@ void cpu_exec(uint64_t n) {
     case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
 
     case NEMU_END: case NEMU_ABORT:
+     print_iringbuf();	
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :

@@ -263,4 +263,6 @@ void init_sdb() {
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();
+
+  sdb_set_batch_mode();
 }

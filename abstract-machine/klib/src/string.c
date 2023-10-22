@@ -6,27 +6,31 @@
 
 //计算一个字符串的长度
 size_t strlen(const char *s) {
-  if(s == NULL)
-  {
-	  return 0;
+   if (s == NULL) {
+    return 0;
   }
-
-  size_t i = 0;
-  while(s[i] != '\0')
-	  i++;
-  return i;
+  size_t n = 0;
+  while(s[n] != '\0') {
+    ++n;
+  }
+  return n;
 
 }
 
 //将一个字符串复制到另一个字符串中
 char *strcpy(char *dst, const char *src) {
-  size_t i;
-  for(i = 0; src[i] != '\0'; i++){
-    dst[i] = src[i];
+  if (src == NULL || dst == NULL) {   // 没有所指，直接返回dst
+    return dst;
   }
-	 
-  dst[i] = '\0';
-  return dst;
+  // 当成指向字符数组处理，所以即使没有空字符，导致内存访问越界，或修改了其他有用的数据也不管，因为这是函数调用者所需要保证的，下面一些string函数都是这样对带非字符串数组
+  char *res = dst;
+  do {
+    *dst = *src;
+    dst++;
+    src++;
+  } while(*src != '\0');  
+  return res;
+
 
 }
 
