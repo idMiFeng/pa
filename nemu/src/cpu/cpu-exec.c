@@ -94,10 +94,10 @@ static void exec_once(Decode *s, vaddr_t pc) {
   uint8_t *inst = (uint8_t *)&s->isa.inst.val;
   for (i = ilen - 1; i >= 0; i --) {
     p += snprintf(p, 4, " %02x", inst[i]);
-    strcpy(iringbuf[iringbuf_index] + IRING_BUF_PC_START_INDEX, s->logbuf);
-  iringbuf_index = (iringbuf_index + 1) % IRING_BUF_SIZE;
+    
   }
-  
+  strcpy(iringbuf[iringbuf_index] + IRING_BUF_PC_START_INDEX, s->logbuf);
+  iringbuf_index = (iringbuf_index + 1) % IRING_BUF_SIZE;
   int ilen_max = MUXDEF(CONFIG_ISA_x86, 8, 4);
   int space_len = ilen_max - ilen;
   if (space_len < 0) space_len = 0;
