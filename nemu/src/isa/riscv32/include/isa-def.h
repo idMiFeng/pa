@@ -18,6 +18,20 @@
 
 #include <common.h>
 
+
+/*
+riscv32提供ecall指令作为自陷指令, 并提供一个mtvec寄存器来存放异常入口地址. 为了保存程序当前的状态, 
+riscv32提供了一些特殊的系统寄存器, 叫控制状态寄存器(CSR寄存器). 在PA中, 我们只使用如下3个CSR寄存器:
+
+mepc寄存器 - 存放触发异常的PC
+mstatus寄存器 - 存放处理器的状态
+mcause寄存器 - 存放触发异常的原因
+riscv32触发异常后硬件的响应过程如下:
+
+将当前PC值保存到mepc寄存器
+在mcause寄存器中设置异常号
+从mtvec寄存器中取出异常入口地址
+跳转到异常入口地址*/
 typedef struct {
   word_t mcause;
   vaddr_t mepc;
