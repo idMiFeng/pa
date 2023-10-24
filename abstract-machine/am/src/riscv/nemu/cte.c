@@ -14,7 +14,7 @@ Context* __am_irq_handle(Context *c) {
     c = user_handler(ev, c);
     assert(c != NULL);
   }
-  printf("%s",&c);
+  
   return c;
 }
 //当 extern 用于函数声明时，它表示该函数的定义在当前编译单元之外，将在其他地方提供。这允许在当前编译单元中使用该函数，而不需要提供函数的完整定义。
