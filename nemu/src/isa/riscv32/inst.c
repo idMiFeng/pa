@@ -162,6 +162,7 @@ static int decode_exec(Decode *s) {
    INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(rd) = CSR(imm); CSR(imm) = src1);
 INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(rd) = CSR(imm); CSR(imm) |= src1);
 INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ECALL(s->dnpc));
+INSTPAT("000000000010 001 00000 000 001100 1101111", mret, I, s -> dnpc=cpu.csr.mepc;);
 
   
   //加指令加在这上面
