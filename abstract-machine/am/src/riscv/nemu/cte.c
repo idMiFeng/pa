@@ -2,14 +2,16 @@
 #include <riscv/riscv.h>
 #include <klib.h>
 
+
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
-    printf("%"  "\n", c->mcause);
+    
     switch (c->mcause) {
-      
+      case -1:
+        ev.event=EVENT_YIELD;break;
       default: ev.event = EVENT_ERROR; break;
     }
     //user_handler是cte_init中注册的回调函数
