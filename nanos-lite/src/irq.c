@@ -1,6 +1,10 @@
 #include <common.h>
 
 static Context* do_event(Event e, Context* c) {
+   printf("event ID=%d\n",e.event);
+   printf("event ID=%d\n",e.event);
+   printf("event ID=%d\n",e.event);
+   printf("event ID=%d\n",e.event);
    switch (e.event) {
     case 4:printf("event ID=%d\n",e.event);
     default: panic("Unhandled event ID = %d", e.event);
