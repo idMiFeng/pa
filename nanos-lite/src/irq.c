@@ -1,12 +1,8 @@
 #include <common.h>
 
 static Context* do_event(Event e, Context* c) {
-   printf("event ID=%d\n",e.event);
-   printf("event ID=%d\n",e.event);
-   printf("event ID=%d\n",e.event);
-   printf("event ID=%d\n",e.event);
    switch (e.event) {
-    case 4:printf("event ID=%d\n",e.event);
+    case 1:printf("event ID=%d\n",e.event);
     default: panic("Unhandled event ID = %d", e.event);
    }
   //返回输入的上下文 c，表示处理事件后的上下文状态。
