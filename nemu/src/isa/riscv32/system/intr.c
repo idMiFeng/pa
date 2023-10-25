@@ -20,10 +20,12 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
    * Then return the address of the interrupt/exception vector.
    */
   //NO对应异常种类，epc对应触发异常的指令地址，最后返回异常入口地址
-
+  if(NO==0){
+    epc+=4;
+  }
   cpu.csr.mcause = NO;
   cpu.csr.mepc = epc;
-
+   
   return cpu.csr.mtvec;
 }
 
