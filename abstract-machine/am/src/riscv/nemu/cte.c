@@ -13,8 +13,12 @@ Context* __am_irq_handle(Context *c) {
         ev.event=EVENT_YIELD;break;
       default: ev.event = EVENT_ERROR; break;
     }
+    printf("%d\n",c->mepc);
+    printf("%d\n",c->mepc);
     //user_handler是cte_init中注册的回调函数
     c = user_handler(ev, c);
+    printf("%d\n",c->mepc);
+    printf("%d\n",c->mepc);
     assert(c != NULL);
   }
   
