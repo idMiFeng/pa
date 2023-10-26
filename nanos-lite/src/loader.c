@@ -15,10 +15,10 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       //使用ramdisk_read函数从ramdisk中读取ELF文件的头部信息，从偏移量0开始读取sizeof(Elf_Ehdr)字节的数据。
       ramdisk_read(&ehdr, 0, sizeof(Elf_Ehdr));
       // 用于检查ELF文件的合法性
-      //assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
+      assert((*(uint32_t *)ehdr.e_ident == 0x7F454C46));
       //创建一个Elf_Phdr类型的数组phdr，用于存储ELF文件的程序头表信息。ehdr.e_phnum表示头部表的数量
       Elf_Phdr phdr[ehdr.e_phnum];
-      //使用ramdisk_read函数从ramdisk中读取程序头表信息。ehdr.e_phoff指示了程序头表在文件中的偏移量，
+      //使用ramdisk_read函数从ramdisk中读取程序头表信息。ehdr.e_ehsize指示了程序头表在文件中的偏移量，
       //sizeof(Elf_Phdr)*ehdr.e_phnum表示要读取的字节数，将所有程序头表都读取到数组phdr中。
       ramdisk_read(phdr, ehdr.e_ehsize, sizeof(Elf_Phdr)*ehdr.e_phnum);
       for (int i = 0; i < ehdr.e_phnum; i++) {
