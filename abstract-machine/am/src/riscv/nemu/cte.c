@@ -15,6 +15,7 @@ Context* __am_irq_handle(Context *c) {
     }
     //user_handler是cte_init中注册的回调函数
     c = user_handler(ev, c);
+    printf("我想掉比啊\n");
     assert(c != NULL);
   }
   
