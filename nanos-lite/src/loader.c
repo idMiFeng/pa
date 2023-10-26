@@ -10,30 +10,29 @@
 #endif
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
-      // 获取可执行文件的大小
-    size_t file_size = get_ramdisk_size();
-
-    // 分配足够的内存来存储可执行文件
-    void *program_memory = malloc(file_size);
-
-    // 从ramdisk中读取可执行文件内容
-    ramdisk_read(program_memory, 0, file_size);
-
-    // 获取可执行文件头部信息
-    Elf32_Ehdr *ehdr = (Elf32_Ehdr *)program_memory;
-
-    // 检查ELF标识符，确保这是一个有效的ELF文件
-    if (ehdr->e_ident[EI_MAG0] != ELFMAG0 || ehdr->e_ident[EI_MAG1] != ELFMAG1 ||
-        ehdr->e_ident[EI_MAG2] != ELFMAG2 || ehdr->e_ident[EI_MAG3] != ELFMAG3) {
-        // 非法ELF文件，释放内存并返回
-        free(program_memory);
-        return;
-    }
-
-    // 设置程序的入口点
-    uintptr_t entry_point = ehdr->e_entry;
+      //Elf_Ehdr ehdr; - 声明一个Elf_Ehdr类型的结构体变量ehdr，用于存储ELF文件的头部信息。
+      Elf_Ehdr ehdr;
+      //使用ramdisk_read函数从ramdisk中读取ELF文件的头部信息，从偏移量0开始读取sizeof(Elf_Ehdr)字节的数据。
+      ramdisk_read(&ehdr, 0, sizeof(Elf_Ehdr));
+      // 用于检查ELF文件的合法性
+      assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
+      //创建一个Elf_Phdr类型的数组phdr，用于存储ELF文件的程序头表信息。ehdr.e_phnum表示头部表的数量
+      Elf_Phdr phdr[ehdr.e_phnum];
+      //使用ramdisk_read函数从ramdisk中读取程序头表信息。ehdr.e_phoff指示了程序头表在文件中的偏移量，
+      //sizeof(Elf_Phdr)*ehdr.e_phnum表示要读取的字节数，将所有程序头表都读取到数组phdr中。
+      ramdisk_read(phdr, ehdr.e_phoff, sizeof(Elf_Phdr)*ehdr.e_phnum);
+      for (int i = 0; i < ehdr.e_phnum; i++) {
+        //检查当前程序头表条目的类型是否为PT_LOAD，表示这是一个需要加载到内存中的段
+      if (phdr[i].p_type == PT_LOAD) {
+        //使用ramdisk_read函数将当前段的内容从ramdisk中读取到内存中。phdr[i].p_vaddr表示段的虚拟地址，
+        //phdr[i].p_offset表示段在文件中的偏移量，phdr[i].p_memsz表示段在内存中的大小。
+          ramdisk_read((void*)phdr[i].p_vaddr, phdr[i].p_offset, phdr[i].p_memsz);
+          // 如果段的文件大小小于内存大小，这个代码用于将未初始化部分（即.bss部分）填充为零。
+          memset((void*)(phdr[i].p_vaddr+phdr[i].p_filesz), 0, phdr[i].p_memsz - phdr[i].p_filesz);
+        }
+      }
       //返回ELF文件的入口地址，表示加载并准备执行的程序的入口点。
-      return entry_point;
+      return ehdr.e_entry;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
@@ -41,3 +40,4 @@ void naive_uload(PCB *pcb, const char *filename) {
   Log("Jump to entry = %p", entry);
   ((void(*)())entry) ();
 }
+
