@@ -20,7 +20,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
       Elf_Phdr phdr[ehdr.e_phnum];
       //使用ramdisk_read函数从ramdisk中读取程序头表信息。ehdr.e_phoff指示了程序头表在文件中的偏移量，
       //sizeof(Elf_Phdr)*ehdr.e_phnum表示要读取的字节数，将所有程序头表都读取到数组phdr中。
-      ramdisk_read(phdr, ehdr.e_phoff, sizeof(Elf_Phdr)*ehdr.e_phnum);
+      ramdisk_read(phdr, ehdr.e_ehsize, sizeof(Elf_Phdr)*ehdr.e_phnum);
       for (int i = 0; i < ehdr.e_phnum; i++) {
         //检查当前程序头表条目的类型是否为PT_LOAD，表示这是一个需要加载到内存中的段
       if (phdr[i].p_type == PT_LOAD) {
