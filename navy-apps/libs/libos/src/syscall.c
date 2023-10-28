@@ -51,7 +51,7 @@ GPRx: 这个宏用于提取参数数组 ARGS_ARRAY 中的第 5 个位置的参�
 #endif
 
 /*
-# define ARGS_ARRAY ("ecall", "a7", "a0", "a1", "a2", "a0")
+
 dummy/main.c
 #define SYS_yield 1
 extern int _syscall_(int, uintptr_t, uintptr_t, uintptr_t);
