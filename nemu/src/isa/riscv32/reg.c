@@ -35,6 +35,16 @@ void isa_reg_display() {
     printf("PC: 0x%08x\n", cpu.pc);
     
 } 
+//若存在名称为name的寄存器, 则返回其当前值, 并设置success为true; 否则设置success为false.
 word_t isa_reg_str2val(const char *s, bool *success) {
-  return 0;
+  for(int i=0;i<32;i++){
+    if(s==regs[i]){
+      *success=true;
+      return cpu.gpr[i];
+    }
+  }
+  
+   *success = false;
+   return 0;
+    
 }
