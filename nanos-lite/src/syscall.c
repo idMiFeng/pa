@@ -28,7 +28,7 @@ void do_syscall(Context *c) {
   a[0] = c->GPR1; //#define GPR1 gpr[17] // a7
  printf("执行到do_syscall %d\n",a[0]);
   switch (a[0]) {
-    case 1:c->GPRx=0;yield();return 0; //SYS_yield系统调用
+    case 1:c->GPRx=0;yield(); //SYS_yield系统调用
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
