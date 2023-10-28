@@ -19,9 +19,9 @@ struct Context {
 };*/
 //gpr1: a7, gpr2: a0, gpr3: a1, gpr4: a2, gprx: a0
 #define GPR1 gpr[17] // a7
-#define GPR2 gpr[10]
-#define GPR3 gpr[11]
-#define GPR4 gpr[12]
-#define GPRx gpr[10]
+#define GPR2 gpr[10] // a0
+#define GPR3 gpr[11]// a1
+#define GPR4 gpr[12] // a2
+#define GPRx gpr[10] // a0
 
 #endif
