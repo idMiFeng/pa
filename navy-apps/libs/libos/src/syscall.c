@@ -50,6 +50,17 @@ GPRx: 这个宏用于提取参数数组 ARGS_ARRAY 中的第 5 个位置的参�
 #error _syscall_ is not implemented
 #endif
 
+/*
+# define ARGS_ARRAY ("ecall", "a7", "a0", "a1", "a2", "a0")
+dummy/main.c
+#define SYS_yield 1
+extern int _syscall_(int, uintptr_t, uintptr_t, uintptr_t);
+
+int main() {
+  return _syscall_(SYS_yield, 0, 0, 0);
+}
+
+*/
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
   //使用 register 关键字将 _gpr1、_gpr2、_gpr3、_gpr4 和 ret 分别分配到寄存器中。这些寄存器用于传递参数和接收系统调用的返回值。
   //_gpr1 变量将与 GPR1 寄存器相关联，这个寄存器将用于存储 _gpr1 变量的值
@@ -64,7 +75,7 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
 
 void _exit(int status) {
   _syscall_(SYS_exit, status, 0, 0);
-  while (1);
+  halt(status);
 }
 
 int _open(const char *path, int flags, mode_t mode) {
