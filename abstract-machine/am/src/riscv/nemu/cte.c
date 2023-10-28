@@ -12,8 +12,8 @@ Context* __am_irq_handle(Context *c) {
     printf("%d\n",c->mcause);
     printf("%d\n",c->mcause);
     switch (c->mcause) {
-      case 0:
-        ev.event=EVENT_YIELD;break;
+      case -1:ev.event=EVENT_YIELD;break;
+      case 1:ev.event=EVENT_SYSCALL;break;
       default: ev.event = EVENT_ERROR; break;
     }
     //user_handler是cte_init中注册的回调函数
