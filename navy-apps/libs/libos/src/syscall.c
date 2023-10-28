@@ -6,9 +6,9 @@
 #include "syscall.h"
 
 // helper macros
-#define _concat(x, y) x ## y
+#define _concat(x, y) x ## y //用来将 x 和 y 连接在一起,动态地生成宏名称
 #define concat(x, y) _concat(x, y)
-#define _args(n, list) concat(_arg, n) list
+#define _args(n, list) concat(_arg, n) list //n 是参数的数量，list 是参数列表。这个宏会根据参数数量调用不同的 _argN 宏
 #define _arg0(a0, ...) a0
 #define _arg1(a0, a1, ...) a1
 #define _arg2(a0, a1, a2, ...) a2
@@ -17,6 +17,11 @@
 #define _arg5(a0, a1, a2, a3, a4, a5, ...) a5
 
 // extract an argument from the macro array
+/*SYSCALL: 这个宏用于提取参数数组 ARGS_ARRAY 中的第 0 个位置的参数，通常用于表示系统调用的类型或标识。
+
+GPR1, GPR2, GPR3, GPR4: 这些宏用于提取参数数组 ARGS_ARRAY 中的第 1、2、3、4 个位置的参数，通常用于表示寄存器值或其他操作数。
+
+GPRx: 这个宏用于提取参数数组 ARGS_ARRAY 中的第 5 个位置的参数，通常用于表示返回值。*/
 #define SYSCALL  _args(0, ARGS_ARRAY)
 #define GPR1 _args(1, ARGS_ARRAY)
 #define GPR2 _args(2, ARGS_ARRAY)
@@ -29,7 +34,11 @@
 # define ARGS_ARRAY ("int $0x80", "eax", "ebx", "ecx", "edx", "eax")
 #elif defined(__ISA_MIPS32__)
 # define ARGS_ARRAY ("syscall", "v0", "a0", "a1", "a2", "v0")
-#elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__)
+/*"ecall"：表示系统调用类型，通常用来标识要执行的系统调用操作。
+"a7"：通常用于 RISC-V 中表示系统调用号（syscall number），它是一个寄存器，存储着要执行的系统调用的编号。
+"a0"、"a1"、"a2"：这些参数表示要传递给系统调用的参数值。在 RISC-V 架构中，这些参数通常存储在 a0、a1、a2 等寄存器中。
+"a0"：这是最后一个参数，通常用于表示系统调用的返回值，将存储系统调用的结果。*/
+#elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__) //riscv32架构的
 # define ARGS_ARRAY ("ecall", "a7", "a0", "a1", "a2", "a0")
 #elif defined(__ISA_AM_NATIVE__)
 # define ARGS_ARRAY ("call *0x100000", "rdi", "rsi", "rdx", "rcx", "rax")
@@ -42,6 +51,8 @@
 #endif
 
 intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
+  //使用 register 关键字将 _gpr1、_gpr2、_gpr3、_gpr4 和 ret 分别分配到寄存器中。这些寄存器用于传递参数和接收系统调用的返回值。
+  //_gpr1 变量将与 GPR1 寄存器相关联，这个寄存器将用于存储 _gpr1 变量的值
   register intptr_t _gpr1 asm (GPR1) = type;
   register intptr_t _gpr2 asm (GPR2) = a0;
   register intptr_t _gpr3 asm (GPR3) = a1;
