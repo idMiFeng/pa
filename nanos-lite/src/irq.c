@@ -1,6 +1,7 @@
 #include <common.h>
 
 static Context* do_event(Event e, Context* c) {
+  printf("do_event中e.event=%d\n",e.event);
    switch (e.event) {
     case 1:printf("event ID=%d\nc->GPRx=%d\n",e.event,c->GPRx);halt(0);printf("执行了halt之后");break;//EVENT_YIELD
     case 2:do_syscall(c);break;//EVENT_SYSCALL
