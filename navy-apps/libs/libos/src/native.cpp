@@ -216,22 +216,22 @@ ssize_t read(int fd, void *buf, size_t count) {
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
-  // if (fd == sbctl_fd) {
-  //   // open audio
-  //   const int *args = (const int *)buf;
-  //   assert(count >= sizeof(int) * 3);
-  //   SDL_InitSubSystem(SDL_INIT_AUDIO);
-  //   SDL_AudioSpec spec = {0};
-  //   spec.freq = args[0];
-  //   spec.channels = args[1];
-  //   spec.samples = args[2];
-  //   spec.userdata = NULL;
-  //   spec.callback = audio_fill;
-  //   SDL_OpenAudio(&spec, NULL);
-  //   SDL_PauseAudio(0);
-  //   return count;
-  // }
-  // return glibc_write(fd, buf, count);
+  if (fd == sbctl_fd) {
+    // open audio
+    const int *args = (const int *)buf;
+    assert(count >= sizeof(int) * 3);
+    SDL_InitSubSystem(SDL_INIT_AUDIO);
+    SDL_AudioSpec spec = {0};
+    spec.freq = args[0];
+    spec.channels = args[1];
+    spec.samples = args[2];
+    spec.userdata = NULL;
+    spec.callback = audio_fill;
+    SDL_OpenAudio(&spec, NULL);
+    SDL_PauseAudio(0);
+    return count;
+  }
+  return glibc_write(fd, buf, count);
 }
 
 int execve(const char *filename, char *const argv[], char *const envp[]) {
