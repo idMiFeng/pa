@@ -82,14 +82,15 @@ int _open(const char *path, int flags, mode_t mode) {
 }
 
 int _write(int fd, void *buf, size_t count) {
-  if(fd==1 ||fd==2){
-    char*buff=(char*)buf;
-    for(int i=0;i<count;i++){
-      _putc(buff[i]);
-    }
+   assert(fd == 1 || fd == 2);
+
+  assert(count > 0);
+  
+  for (int i = 0; i < count; i++) {
+    putch(*((char*)buf + i));
   }
-  _exit(SYS_write);
-  return 0;
+
+  return count;
 }
 
 void *_sbrk(intptr_t increment) {
