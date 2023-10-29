@@ -61,11 +61,11 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
   //使用 register 关键字将 _gpr1、_gpr2、_gpr3、_gpr4 和 ret 分别分配到寄存器中。这些寄存器用于传递参数和接收系统调用的返回值。
   //_gpr1 变量将与 GPR1 寄存器相关联，这个寄存器将用于存储 _gpr1 变量的值
   //GPR的值("syscall 0", "a7", "a0", "a1", "a2", "a0")
-  register intptr_t _gpr1 asm (GPR1) = type;
+  register intptr_t _gpr1 asm (GPR1) = type;//a7
   register intptr_t _gpr2 asm (GPR2) = a0;
   register intptr_t _gpr3 asm (GPR3) = a1;
   register intptr_t _gpr4 asm (GPR4) = a2;
-  register intptr_t ret asm (GPRx);
+  register intptr_t ret asm (GPRx);//a0
   asm volatile (SYSCALL : "=r" (ret) : "r"(_gpr1), "r"(_gpr2), "r"(_gpr3), "r"(_gpr4));
   
   return ret;
@@ -82,6 +82,12 @@ int _open(const char *path, int flags, mode_t mode) {
 }
 
 int _write(int fd, void *buf, size_t count) {
+  if(fd==1 ||fd==2){
+    char*buff=(char*)buf;
+    for(int i=0;i<count;i++){
+      _putc(buff[i]);
+    }
+  }
   _exit(SYS_write);
   return 0;
 }
