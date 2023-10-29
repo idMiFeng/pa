@@ -72,7 +72,7 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
 }
 
 void _exit(int status) {
-  _syscall_(SYS_exit, 10, 0, 0);
+  _syscall_(SYS_exit, status, 0, 0);
   while (1);
 }
 
@@ -82,7 +82,8 @@ int _open(const char *path, int flags, mode_t mode) {
 }
 
 int _write(int fd, void *buf, size_t count) {
-   assert(fd == 1 || fd == 2);
+ 
+  assert(fd == 1 || fd == 2);
 
   assert(count > 0);
   
