@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <time.h>
 #include "syscall.h"
-
+#include <stdio.h>
 // helper macros
 #define _concat(x, y) x ## y //用来将 x 和 y 连接在一起,动态地生成宏名称
 #define concat(x, y) _concat(x, y)
@@ -67,7 +67,7 @@ intptr_t _syscall_(intptr_t type, intptr_t a0, intptr_t a1, intptr_t a2) {
   register intptr_t _gpr4 asm (GPR4) = a2;
   register intptr_t ret asm (GPRx);//a0
   asm volatile (SYSCALL : "=r" (ret) : "r"(_gpr1), "r"(_gpr2), "r"(_gpr3), "r"(_gpr4));
-  
+  printf("_syscall最后的ret是%d\n",ret);
   return ret;
 }
 
@@ -83,7 +83,8 @@ int _open(const char *path, int flags, mode_t mode) {
 
 int _write(int fd, void *buf, size_t count) {
    assert(fd == 1 || fd == 2);
-  return _syscall_(SYS_write, (intptr_t)buf, count,0);
+  _syscall_(SYS_write, (intptr_t)buf, count,0);
+  return count;
   
 }
 
