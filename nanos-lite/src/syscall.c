@@ -26,7 +26,11 @@ SYS_write(intptr_t *buf, size_t count,intptr_t *ret){
       for (int i = 0; i < count; i++) {
     putch(*((char*)buf + i));
   }
+  printf("此时ret=%d\n",ret);
+  printf("此时ret=%d\n",ret);
   ret=count;
+  printf("此后ret=%d\n",ret);
+  printf("此后ret=%d\n",ret);
   return count;
 }
 void do_syscall(Context *c) {
