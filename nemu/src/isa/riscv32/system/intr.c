@@ -23,6 +23,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   //0是自陷
   if(NO>=0 && NO<=19){
     epc+=4;
+    printf("epc+4\n");
   }
   cpu.csr.mcause = NO;
   cpu.csr.mepc = epc;
