@@ -83,10 +83,10 @@ int _open(const char *path, int flags, mode_t mode) {
 
 int _write(int fd, void *buf, size_t count) {
    assert(fd == 1 || fd == 2);
-  int res=_syscall_(SYS_write, (intptr_t)buf, count,0);
-  printf("count和res分别为%d,%d\n",&count,&res);
-  _exit(res);
-  return count;
+  // int res=_syscall_(SYS_write, (intptr_t)buf, count,0);
+  printf("fd和count分别为%d,%d\n",&fd,&count);
+  // _exit(res);
+  // return count;
   
 }
 
