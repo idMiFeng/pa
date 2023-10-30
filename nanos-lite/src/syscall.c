@@ -22,7 +22,7 @@
   SYS_times,
   SYS_gettimeofday
 };*/
-SYS_write(intptr_t *buf, size_t count,intptr_t *ret){
+int SYS_write(intptr_t *buf, size_t count,intptr_t *ret){
       for (int i = 0; i < count; i++) {
     putch(*((char*)buf + i));
   }
