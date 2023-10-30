@@ -28,7 +28,6 @@ SYS_write(intptr_t *buf, size_t count){
   }
   printf("此时count=%d\n",&count);
   
-  return count;
 }
 void do_syscall(Context *c) {
   uintptr_t a[4];
