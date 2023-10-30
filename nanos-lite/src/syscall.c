@@ -22,7 +22,7 @@
   SYS_times,
   SYS_gettimeofday
 };*/
-int SYS_write(intptr_t *buf, size_t count){
+SYS_write(intptr_t *buf, size_t count){
       for (int i = 0; i < count; i++) {
     putch(*((char*)buf + i));
   }
@@ -37,7 +37,7 @@ void do_syscall(Context *c) {
   switch (a[0]) {
     case 0:c->GPRx=0;printf("SYS_exit， do_syscall此时 c->GPRx=%d\n",c->GPRx);halt(c->GPRx);//SYS_exit系统调用
     case 1:printf("SYS_yield， do_syscall此时c->GPRx=%d\n",c->GPRx);yield(); //SYS_yield系统调用
-    case 4:int res=SYS_write(c->GPR2,c->GPR3);c->GPRx=res;return res;
+    case 4:SYS_write(c->GPR2,c->GPR3);break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
