@@ -85,8 +85,8 @@ int _write(int fd, void *buf, size_t count) {
    assert(fd == 1 || fd == 2);
   // int res=_syscall_(SYS_write, (intptr_t)buf, count,0);
  
-  _exit(count);
-  // return count;
+  
+  return count;
   
 }
 
