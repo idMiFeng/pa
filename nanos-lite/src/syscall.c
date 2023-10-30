@@ -28,7 +28,7 @@ SYS_write(intptr_t *buf, size_t count,intptr_t *ret){
   }
   printf("此时ret=%d\n",ret);
   printf("此时ret=%d\n",ret);
-  ret=count;
+  ret=(int)count;
   printf("此后ret=%d\n",ret);
   printf("此后ret=%d\n",ret);
   return count;
@@ -40,7 +40,7 @@ void do_syscall(Context *c) {
   switch (a[0]) {
     case 0:c->GPRx=0;printf("SYS_exit， do_syscall此时 c->GPRx=%d\n",c->GPRx);halt(c->GPRx);//SYS_exit系统调用
     case 1:printf("SYS_yield， do_syscall此时c->GPRx=%d\n",c->GPRx);yield(); //SYS_yield系统调用
-    case 4:return SYS_write(c->GPR2,c->GPR3,c->GPRx);
+    case 4:int res=SYS_write(c->GPR2,c->GPR3,c->GPRx);c->GPRx=res;return res;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
 }
