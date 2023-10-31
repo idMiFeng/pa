@@ -87,8 +87,17 @@ int _write(int fd, void *buf, size_t count) {
   
 }
 
+extern char _end;
+static intptr_t cur_brk = (intptr_t)&_end;
+
 void *_sbrk(intptr_t increment) {
-  return (void *)-1;
+  intptr_t old_brk = cur_brk;
+  intptr_t new_brk = old_brk + increment;
+  if (_syscall_(SYS_brk, new_brk, 0, 0) != 0) {
+    return (void*)-1; 
+  }
+  cur_brk = new_brk;
+  return (void*)old_brk;
 }
 
 int _read(int fd, void *buf, size_t count) {
