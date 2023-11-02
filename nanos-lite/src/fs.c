@@ -29,8 +29,8 @@ size_t invalid_write(const void *buf, size_t offset, size_t len) {
 /* This is the information about all files in disk. */
 static Finfo file_table[] __attribute__((used)) = {
   [FD_STDIN]  = {"stdin", 0, 0, invalid_read, invalid_write},
-  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, invalid_write},
-  [FD_STDERR] = {"stderr", 0, 0, invalid_read, invalid_write},
+  [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
+  [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
 #include "files.h"
 };
 
@@ -52,9 +52,10 @@ int fs_close(int fd){
 }
 
 size_t fs_read(int fd, void *buf, size_t len){
-   if (fd <= 2) {
-        Log("ignore read %s", file_table[fd].name);
-        return 0;
+  ReadFn readFn = file_table[fd].read;
+  if (readFn != NULL) {
+        // 特殊文件处理
+        return readFn(buf, 0, len);
   }
   size_t read_len = len;
   size_t open_offset = file_table[fd].open_offset;
@@ -74,10 +75,10 @@ size_t fs_write(int fd, const void *buf, size_t len) {
         return 0;
     }
 
-    if (fd == 1 || fd == 2) {
-        for (size_t i = 0; i < len; ++i)
-            putch(*((char *)buf + i));
-        return len;
+    WriteFn writeFn = file_table[fd].write;
+    if (writeFn != NULL) {
+        // 特殊文件处理
+      return writeFn(buf, 0, len);
     }
     size_t write_len = len;
     size_t open_offset = file_table[fd].open_offset;

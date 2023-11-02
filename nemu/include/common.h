@@ -62,3 +62,4 @@ void display_pread(paddr_t addr,int len);
 void display_pwrite(paddr_t addr,int len,word_t data);
 void trace_func_call(paddr_t target);
 
+size_t serial_write(const void *buf, size_t offset, size_t len);

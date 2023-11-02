@@ -1,5 +1,7 @@
 #include <common.h>
 #include "syscall.h"
+#include <sys/time.h>
+
 /*enum {
   SYS_exit,
   SYS_yield,
@@ -29,6 +31,14 @@ int sys_write(intptr_t *buf, size_t count){
    return count;
   
 }
+
+int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
+    uint64_t us = io_read(AM_TIMER_UPTIME).us;
+    tv->tv_sec = us / 1000000;
+    tv->tv_usec = us - us / 1000000 * 1000000;
+    return 0;
+}
+
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1; //#define GPR1 gpr[17] // a7
@@ -63,6 +73,10 @@ void do_syscall(Context *c) {
     case SYS_lseek:
         ret = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
         Log("fs_lseek(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
+        break;
+    case SYS_gettimeofday:
+        ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3);
+        Log("sys_gettimeofday(%p, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
         break;
     default: panic("Unhandled syscall ID = %d", a[0]);
   }

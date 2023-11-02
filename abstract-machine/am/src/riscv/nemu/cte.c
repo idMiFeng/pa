@@ -12,11 +12,6 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     printf("__am_irq_handle中c->GPR1(a7)为%d\n",c->GPR1);
-    printf("__am_irq_handle中c->GPR2(a0)为%d\n",c->GPR2);
-    printf("__am_irq_handle中c->GPR3(a1)为%d\n",c->GPR3);
-    printf("__am_irq_handle中c->GPR4(a2)为%d\n",c->GPR4);
-    printf("__am_irq_handle中c->GPRx(a0)为%d\n",c->GPRx);
-    printf("__am_irq_handle中c->mcause(a7)为%d\n",c->mcause);
     switch (c->mcause) {
       case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:case 8:case 9:case 10:case 11:case 12:case 13:case 14:case 15:case 16:case 17:case 18:case 19:ev.event=EVENT_SYSCALL;break;
       default: ev.event = EVENT_ERROR; break;
