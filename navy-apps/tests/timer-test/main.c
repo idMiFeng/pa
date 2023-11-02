@@ -3,14 +3,12 @@
 #include <sys/time.h>
 
 int main() {
-  struct timeval start, end;
-  gettimeofday(&start, NULL);
+  uint32_t last_tick = NDL_GetTicks();
   while (1) {
-    gettimeofday(&end, NULL);
-    // 超过0.5秒打印一次
-    if (end.tv_sec - start.tv_sec >= 0 && end.tv_usec - start.tv_usec >= 500000) {
+    uint32_t tick = NDL_GetTicks();
+    if (tick - last_tick >= 500) {
       printf("Hello world!\n");
-      start = end;
+      last_tick = tick;
     }
   }
   return 0;
