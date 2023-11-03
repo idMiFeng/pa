@@ -10,6 +10,12 @@
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+int canvas_w = 0;
+int canvas_h = 0;
+ //canvas_relative_screen_w 和 canvas_relative_screen_h 是画布相对于屏幕左上角的坐标
+int canvas_relative_screen_w = 0;
+int canvas_relative_screen_h = 0;
+
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
@@ -24,6 +30,9 @@ int NDL_PollEvent(char *buf, int len) {
   return ret == 0 ? 0 : 1;
 }
 
+
+// 打开一张(*w) X (*h)的画布
+// 如果*w和*h均为0, 则将系统全屏幕作为画布, 并将*w和*h分别设为系统屏幕的大小
 void NDL_OpenCanvas(int *w, int *h) {
   if (getenv("NWM_APP")) {
     int fbctl = 4;
@@ -42,12 +51,87 @@ void NDL_OpenCanvas(int *w, int *h) {
     }
     close(fbctl);
   }
+
+  if (*w == 0 && *h == 0) {
+      *w = screen_w;
+      *h = screen_h;
+  }
+
+  canvas_w = *w;
+  canvas_h = *h;
+  //canvas_relative_screen_w 和 canvas_relative_screen_h 是画布相对于屏幕左上角的坐标
+  canvas_relative_screen_w = (screen_w - canvas_w) / 2;
+  canvas_relative_screen_h = (screen_h - canvas_h) / 2;
+
+  assert(canvas_w + canvas_relative_screen_w <= screen_w
+          && canvas_h + canvas_relative_screen_h <= screen_h);
+}
+
+
+//解析 /proc/dispinfo 文件的内容，并写入 screen_w 和 screen_h，作为屏幕大小：
+static void init_dispinfo() {
+  int buf_size = 1024; 
+  char * buf = (char *)malloc(buf_size * sizeof(char));
+  int fd = open("/proc/dispinfo", 0, 0);
+  int ret = read(fd, buf, buf_size);
+  assert(ret < buf_size); // to be cautious...
+  assert(close(fd) == 0);
+
+  int i = 0;
+  int width = 0, height = 0;
+//使用 strncmp 函数检查字符串 "WIDTH" 是否位于 buf 中 i 处开始的位置，以确保文件内容的格式正确。
+  assert(strncmp(buf + i, "WIDTH", 5) == 0);
+  //这一行将 i 增加 5，以跳过字符串 "WIDTH"。
+  i += 5;
+  for (; i < buf_size; ++i) {
+      if (buf[i] == ':') { i++; break; }
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; ++i) {
+    //检查当前字符是否是数字字符。如果是，它跳出循环以开始解析宽度值。
+      if (buf[i] >= '0' && buf[i] <= '9') break;
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; ++i) {
+    
+      if (buf[i] >= '0' && buf[i] <= '9') {
+        //检查当前字符是否是数字字符。如果是，它将当前字符的数字值添加到 width 变量中。
+          width = width * 10 + buf[i] - '0';
+      } else {
+          break;
+      }
+  }
+  assert(buf[i++] == '\n');
+
+  assert(strncmp(buf + i, "HEIGHT", 6) == 0);
+  i += 6;
+  for (; i < buf_size; ++i) {
+      if (buf[i] == ':') { i++; break; }
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; ++i) {
+      if (buf[i] >= '0' && buf[i] <= '9') break;
+      assert(buf[i] == ' ');
+  }
+  for (; i < buf_size; ++i) {
+      if (buf[i] >= '0' && buf[i] <= '9') {
+          height = height * 10 + buf[i] - '0';
+      } else {
+          break;
+      }
+  }
+
+  free(buf);
+
+  screen_w = width;
+  screen_h = height;
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
+  
 }
 
 void NDL_CloseAudio() {
@@ -66,6 +150,9 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
+  //解析屏幕高度宽度
+  init_dispinfo();
+
   return 0;
 }
 

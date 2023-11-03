@@ -31,7 +31,9 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  return 0;
+  AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
+  //snprintf函数会返回已经写入缓冲区的字符数（不包括字符串结尾的'\0'），如果写入失败则返回负值。
+  return snprintf((char *)buf, len, "WIDTH:%d\nHEIGHT:%d\n", t.width, t.height);
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {

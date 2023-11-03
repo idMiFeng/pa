@@ -56,19 +56,19 @@ void do_syscall(Context *c) {
         break;  
     case SYS_open:
         ret = fs_open((const char *)c->GPR2, c->GPR3, c->GPR4);
-        //Log("fs_open(%s, %d, %d) = %d",(const char *)c->GPR2, c->GPR3, c->GPR4, ret);
+        Log("fs_open(%s, %d, %d) = %d",(const char *)c->GPR2, c->GPR3, c->GPR4, ret);
         break;
     case SYS_read:
         ret = fs_read(c->GPR2, (void *)c->GPR3, (size_t)c->GPR4);
-        //Log("fs_read(%d, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
+        Log("fs_read(%d, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
         break;
     case SYS_close:
         ret = fs_close(c->GPR2);
-        //Log("fs_close(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
+        Log("fs_close(%d, %d, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
         break;
     case SYS_write:
         ret = fs_write(c->GPR2, (void *)c->GPR3, (size_t)c->GPR4);
-        //Log("fs_write(%d, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
+        Log("fs_write(%d, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
         break;
     case SYS_lseek:
         ret = fs_lseek(c->GPR2, (size_t)c->GPR3, c->GPR4);
