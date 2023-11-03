@@ -50,19 +50,22 @@ void NDL_OpenCanvas(int *w, int *h) {
     close(fbctl);
   }
 
+   // NWM_APP logic ... 
+
   if (*w == 0 && *h == 0) {
-      *w = screen_w;
-      *h = screen_h;
+    *w = screen_w;
+    *h = screen_h;
   }
 
   canvas_w = *w;
   canvas_h = *h;
-  //canvas_relative_screen_w 和 canvas_relative_screen_h 是画布相对于屏幕左上角的坐标
-  canvas_relative_screen_w = (screen_w - canvas_w) / 2;
-  canvas_relative_screen_h = (screen_h - canvas_h) / 2;
 
-  assert(canvas_w + canvas_relative_screen_w <= screen_w
-          && canvas_h + canvas_relative_screen_h <= screen_h);
+  // 这里实现居中
+  canvas_x = (screen_w - canvas_w) / 2;
+  canvas_y = (screen_h - canvas_h) / 2;
+
+  assert(canvas_x + canvas_w <= screen_w);
+  assert(canvas_y + canvas_h <= screen_h);
 }
 
 
@@ -126,12 +129,14 @@ static void init_dispinfo() {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
- int fd = open("/dev/fb", 0, 0);
-  for (int i = 0; i < h && y + i < canvas_h; ++i) {
-    lseek(fd, (y + canvas_relative_screen_h + i) * screen_w + (x + canvas_relative_screen_w), SEEK_SET);
-    write(fd, pixels + i * w, w < canvas_w - x ? w : canvas_w - x);
+ for (int i = 0; i < h && i + y < canvas_h; i++) {
+    
+    int offset = (canvas_y + y + i) * screen_w + (canvas_x + x);
+    lseek(fb_fd, 4 * offset, SEEK_SET);
+
+    w = canvas_w - x > w ? canvas_w - x : w;
+    write(fb_fd, pixels + i * w, 4 * w);
   }
-  assert(close(fd) == 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
