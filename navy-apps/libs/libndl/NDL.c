@@ -128,6 +128,12 @@ static void init_dispinfo() {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
+ int fd = open("/dev/fb", 0, 0);
+  for (int i = 0; i < h && y + i < canvas_h; ++i) {
+    lseek(fd, (y + canvas_relative_screen_h + i) * screen_w + (x + canvas_relative_screen_w), SEEK_SET);
+    write(fd, pixels + i * w, w < canvas_w - x ? w : canvas_w - x);
+  }
+  assert(close(fd) == 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
