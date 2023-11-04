@@ -12,8 +12,6 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 //画布大小
 static int canvas_w=0,canvas_h=0;
-//居中后大小
-static int canvas_x=0,canvas_y=0;
 
  //canvas_relative_screen_w 和 canvas_relative_screen_h 是画布相对于屏幕左上角的坐标
 
@@ -64,13 +62,7 @@ void NDL_OpenCanvas(int *w, int *h) {
 
   canvas_w = *w;
   canvas_h = *h;
-   // 这里实现居中
-  canvas_x = (screen_w - canvas_w) / 2;
-  canvas_y = (screen_h - canvas_h) / 2;
-  printf("canvas_w : %d\ncanvas_h : %d\n", canvas_w, canvas_h);
-  printf("canvas_x : %d\ncanvas_y : %d\n", canvas_x, canvas_y);
 
-  
 }
 
 
