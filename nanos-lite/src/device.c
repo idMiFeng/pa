@@ -35,16 +35,15 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   printf("WIDTH : %d\nHEIGHT : %d\n", t.width, t.height);
   return snprintf((char *)buf, len, "WIDTH : %d\nHEIGHT : %d", t.width, t.height);
 }
+//buf中的len字节写到屏幕上offset处
 size_t fb_write(const void *buf, size_t offset, size_t len) {
   AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
 
-  offset = offset / 4;
-  int w = len / 4;
 
   int y = offset / t.width;
   int x = offset - y * t.width;
 
-  io_write(AM_GPU_FBDRAW, x, y, (void*)buf, w, 1, true);
+  io_write(AM_GPU_FBDRAW, x, y, (void*)buf, len, 1, true);
   return len;
 }
 
