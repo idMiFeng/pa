@@ -134,44 +134,12 @@ static void init_dispinfo() {
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-   int fd = open("/dev/fb", 0, 0);
-    if (fd < 0) {
-        printf("Error opening /dev/fb\n");
-        return;
-    }
-    
-    // 裁剪绘制区域，确保不超出画布范围
-    if (x < 0) {
-        w += x;
-        x = 0;
-    }
-    if (y < 0) {
-        h += y;
-        y = 0;
-    }
-    if (x + w > canvas_w) {
-        w = canvas_w - x;
-    }
-    if (y + h > canvas_h) {
-        h = canvas_h - y;
-    }
-
-    // 调整偏移，根据画布位置
-    x += canvas_x;
-    y += canvas_y;
-    
-    if (w <= 0 || h <= 0) {
-        printf("Invalid draw area\n");
-        close(fd);
-        return;
-    }
-    
-    lseek(fd, (y * screen_w + x) * 4, SEEK_SET);
-    for (int i = 0; i < h; i++) {
-        write(fd, pixels + i * w, w * 4);
-    }
-    
-    close(fd);
+  int fd = open("/dev/fb", 0, 0);
+  for (int i = 0; i < h && y + i < canvas_h; ++i) {
+    lseek(fd, (y + canvas_y + i) * screen_w + (x + canvas_x), SEEK_SET);
+    write(fd, pixels + i * w, w < canvas_w - x ? w : canvas_w - x);
+  }
+  assert(close(fd) == 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -196,7 +164,7 @@ int NDL_Init(uint32_t flags) {
   }
   //解析屏幕高度宽度
   init_dispinfo();
-  printf("WIDTH : %d\nHEIGHT : %d\n", screen_w, screen_h);
+  printf("屏幕:WIDTH : %d\nHEIGHT : %d\n", screen_w, screen_h);
   return 0;
 }
 

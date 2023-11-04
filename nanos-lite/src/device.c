@@ -32,7 +32,6 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
-  printf("WIDTH : %d\nHEIGHT : %d\n", t.width, t.height);
   return snprintf((char *)buf, len, "WIDTH : %d\nHEIGHT : %d", t.width, t.height);
 }
 //buf中的len字节写到屏幕上offset处
