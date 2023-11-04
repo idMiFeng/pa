@@ -137,14 +137,11 @@ static void init_dispinfo() {
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     int fd = open("/dev/fb", 0, 0);
-    for (int i = 0; i < h && i + y < canvas_h; i++) {
-    
-    int offset = (canvas_y + y + i) * screen_w + (canvas_x + x);
-    lseek(fd, 4 * offset, 0);
-
-    w = canvas_w - x > w ? canvas_w - x : w;
-    write(fd, pixels + i * w, 4 * w);
+  for (int i = 0; i < h && y + i < canvas_h; ++i) {
+    lseek(fd, (y + canvas_y + i) * screen_w + (x + canvas_x ), SEEK_SET);
+    write(fd, pixels + i * w, w < canvas_w - x ? w : canvas_w - x);
   }
+  assert(close(fd) == 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
