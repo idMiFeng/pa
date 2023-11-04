@@ -31,25 +31,10 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  #define TEMP_BUF_SIZE 32
-static char temp_buf[TEMP_BUF_SIZE]; // for events_read
-  memset(temp_buf, 0, TEMP_BUF_SIZE); // reset
-
-  AM_GPU_CONFIG_T ev = io_read(AM_GPU_CONFIG);
-  int width = ev.width;
-  int height = ev.height;
-
-  int ret = sprintf(temp_buf, "WIDTH : %d\nHEIGHT : %d", width, height);
-  // ret -> exclude terminating null character
-  if (ret >= len) {
-      strncpy(buf, temp_buf, len - 1);
-      ret = len;
-  } else {
-      strncpy(buf, temp_buf, ret);
-  }
-  return ret; // ret -> include terminating null character
+  AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
+  printf("WIDTH : %d\nHEIGHT : %d\n", t.width, t.height);
+  return snprintf((char *)buf, len, "WIDTH : %d\nHEIGHT : %d", t.width, t.height);
 }
-
 size_t fb_write(const void *buf, size_t offset, size_t len) {
  AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
 

@@ -10,6 +10,8 @@
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+//画布大小
+static int canvas_w=0,canvas_h=0;
 
  //canvas_relative_screen_w 和 canvas_relative_screen_h 是画布相对于屏幕左上角的坐标
 
@@ -31,6 +33,7 @@ int NDL_PollEvent(char *buf, int len) {
 
 // 打开一张(*w) X (*h)的画布
 // 如果*w和*h均为0, 则将系统全屏幕作为画布, 并将*w和*h分别设为系统屏幕的大小
+// 目前NDL_OpenCanvas()只需要记录画布的大小就可以了, 当然我们要求画布大小不能超过屏幕大小
 void NDL_OpenCanvas(int *w, int *h) {
   if (getenv("NWM_APP")) {
     int fbctl = 4;
@@ -60,12 +63,9 @@ void NDL_OpenCanvas(int *w, int *h) {
   canvas_w = *w;
   canvas_h = *h;
 
-  // 这里实现居中
-  canvas_x = (screen_w - canvas_w) / 2;
-  canvas_y = (screen_h - canvas_h) / 2;
+  
 
-  assert(canvas_x + canvas_w <= screen_w);
-  assert(canvas_y + canvas_h <= screen_h);
+  
 }
 
 
@@ -129,14 +129,7 @@ static void init_dispinfo() {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
- for (int i = 0; i < h && i + y < canvas_h; i++) {
-    
-    int offset = (canvas_y + y + i) * screen_w + (canvas_x + x);
-    lseek(fb_fd, 4 * offset, SEEK_SET);
 
-    w = canvas_w - x > w ? canvas_w - x : w;
-    write(fb_fd, pixels + i * w, 4 * w);
-  }
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -161,7 +154,7 @@ int NDL_Init(uint32_t flags) {
   }
   //解析屏幕高度宽度
   init_dispinfo();
-
+  printf("WIDTH : %d\nHEIGHT : %d\n", screen_w, screen_h);
   return 0;
 }
 
