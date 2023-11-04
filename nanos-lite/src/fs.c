@@ -130,5 +130,6 @@ void init_fs() {
    AM_GPU_CONFIG_T ev = io_read(AM_GPU_CONFIG);
   int width = ev.width;
   int height = ev.height;
-  file_table[FD_FB].size = width * height * 4;
+  file_table[FD_FB].size = width * height * sizeof(uint32_t);
+  printf("file_table[FD_FB].size is %d\n",file_table[FD_FB].size);
 }
