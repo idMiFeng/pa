@@ -13,6 +13,9 @@ static int screen_w = 0, screen_h = 0;
 //画布大小
 static int canvas_w=0,canvas_h=0;
 
+//相对于屏幕左上角的画布位置坐标
+static int canvas_x=0,canvas_y=0;
+
  //canvas_relative_screen_w 和 canvas_relative_screen_h 是画布相对于屏幕左上角的坐标
 
 
@@ -62,7 +65,10 @@ void NDL_OpenCanvas(int *w, int *h) {
 
   canvas_w = *w;
   canvas_h = *h;
-
+  canvas_x=(screen_w - canvas_w) / 2;
+  canvas_y=(screen_h - canvas_h) / 2;
+  printf("画布的大小为宽%d X 高%d\n",canvas_w,canvas_h);
+  printf("相对于屏幕左上角的画布位置坐标x:%d,y:%d\n",canvas_x,canvas_y);
 }
 
 
@@ -128,7 +134,44 @@ static void init_dispinfo() {
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  printf("w and h is %d,%d\n",w,h);
+   int fd = open("/dev/fb", 0, 0);
+    if (fd < 0) {
+        printf("Error opening /dev/fb\n");
+        return;
+    }
+    
+    // 裁剪绘制区域，确保不超出画布范围
+    if (x < 0) {
+        w += x;
+        x = 0;
+    }
+    if (y < 0) {
+        h += y;
+        y = 0;
+    }
+    if (x + w > canvas_w) {
+        w = canvas_w - x;
+    }
+    if (y + h > canvas_h) {
+        h = canvas_h - y;
+    }
+
+    // 调整偏移，根据画布位置
+    x += canvas_x;
+    y += canvas_y;
+    
+    if (w <= 0 || h <= 0) {
+        printf("Invalid draw area\n");
+        close(fd);
+        return;
+    }
+    
+    lseek(fd, (y * screen_w + x) * 4, SEEK_SET);
+    for (int i = 0; i < h; i++) {
+        write(fd, pixels + i * w, w * 4);
+    }
+    
+    close(fd);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
