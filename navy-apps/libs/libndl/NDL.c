@@ -133,16 +133,17 @@ static void init_dispinfo() {
 // 向画布`(x, y)`坐标处绘制`w*h`的矩形图像, 并将该绘制区域同步到屏幕上
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  printf("向画布`(%d, %d)`坐标处绘制`%d * %d`的矩形图像\n",x,y,w,h);
   int fd = open("/dev/fb", 0, 0);
- for (int i = 0; i < h && i + y < canvas_h; i++) {
+  for (int i = 0; i < h && i + y < canvas_h; i++) {
     
     int offset = (canvas_y + y + i) * screen_w + (canvas_x + x);
-    lseek(fd, 4 * offset, SEEK_SET);
+    lseek(fd, offset, SEEK_SET);
 
     w = canvas_w - x > w ? canvas_w - x : w;
-    write(fd, pixels + i * w, 4 * w);
+    write(fd, pixels + i * w, w);
   }
+
+  close(fd);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
