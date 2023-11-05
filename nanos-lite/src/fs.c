@@ -133,5 +133,5 @@ void init_fs() {
   int width = ev.width;
   int height = ev.height;
   file_table[FD_FB].size = width * height * sizeof(uint32_t);
-  printf("file_table[FD_FB].size is %d\n",file_table[FD_FB].size);
+
 }
