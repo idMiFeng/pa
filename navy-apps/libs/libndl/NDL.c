@@ -135,16 +135,14 @@ static void init_dispinfo() {
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   printf("向画布`(%d, %d)`坐标处绘制`%d * %d`的矩形图像\n",x,y,w,h);
   int fd = open("/dev/fb", 0, 0);
-  printf("fd is %d\n",fd);
-  //一行一行写
-  for (int i = 0; i < h; ++i) {
-    //从文件开头偏移 (y + canvas_y + i) * screen_w + (x + canvas_x)个字节。
-    // screen_w 画布宽度
-    //  (canvas_x,canvas_y) 相对于屏幕左上角的画布位置坐标
-    lseek(fd, (y + canvas_y + i) * screen_w + (x + canvas_x), SEEK_SET);
-    write(fd, pixels + i * w, w < canvas_w - x ? w : canvas_w - x);
+ for (int i = 0; i < h && i + y < canvas_h; i++) {
+    
+    int offset = (canvas_y + y + i) * screen_w + (canvas_x + x);
+    lseek(fd, 4 * offset, SEEK_SET);
+
+    w = canvas_w - x > w ? canvas_w - x : w;
+    write(fd, pixels + i * w, 4 * w);
   }
-  assert(close(fd) == 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
