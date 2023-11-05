@@ -137,13 +137,13 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   int fd = open("/dev/fb", 0, 0);
   printf("fd is %d\n",fd);
   //一行一行写
-  for (int i = 0; i < h; ++i) {
+  //for (int i = 0; i < h; ++i) {
     //从文件开头偏移 (y + canvas_y + i) * screen_w + (x + canvas_x)个字节。
     // screen_w 画布宽度
     //  (canvas_x,canvas_y) 相对于屏幕左上角的画布位置坐标
-    lseek(fd, (y + canvas_y + i) * screen_w + (x + canvas_x), SEEK_SET);
-    write(fd, pixels + i * w, w < canvas_w - x ? w : canvas_w - x);
-  }
+    lseek(fd, (y + canvas_y ) * screen_w + (x + canvas_x), SEEK_SET);
+    write(fd, pixels , w < canvas_w - x ? w : canvas_w - x);
+  //}
   assert(close(fd) == 0);
 }
 
