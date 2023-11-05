@@ -81,7 +81,8 @@ size_t fs_write(int fd, const void *buf, size_t len) {
     WriteFn writeFn = file_table[fd].write;
     if (writeFn != NULL) {
         // 特殊文件处理
-      return writeFn(buf, 0, len);
+      size_t open_offset = file_table[fd].open_offset;
+      return writeFn(buf, open_offset, len);
     }
     size_t write_len = len;
     size_t open_offset = file_table[fd].open_offset;
