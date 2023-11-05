@@ -43,7 +43,9 @@ size_t fb_write(const void *buf, size_t offset, size_t len) {
   //使用这个 offset 来在缓冲区中找到正确的数据，然后将其写入屏幕的 (x, y) 位置。
   int y = offset / t.width;
   int x = offset - y * t.width;
-  io_write(AM_GPU_FBDRAW, x, y, (void*)buf, len, len, true);
+  int h = len / t.width;
+  int w = len - h * t.width;
+  io_write(AM_GPU_FBDRAW, x, y, (void*)buf, w, h, true);
   return len;
 } 
 

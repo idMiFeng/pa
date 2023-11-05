@@ -136,7 +136,7 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   printf("向画布`(%d, %d)`坐标处绘制`%d * %d`的矩形图像\n",x,y,w,h);
   int fd = open("/dev/fb", 0, 0);
   lseek(fd, (y + canvas_y ) * screen_w + (x + canvas_x), SEEK_SET);
-  write(fd, pixels , w < canvas_w - x ? w : canvas_w - x);
+  write(fd, pixels ,h * screen_w + w);
   
   assert(close(fd) == 0);
 }
