@@ -134,8 +134,10 @@ static void init_dispinfo() {
 // 图像像素按行优先方式存储在`pixels`中, 每个像素用32位整数以`00RRGGBB`的方式描述颜色
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   int fd = open("/dev/fb", 0, 0);
-  lseek(fd, (y + canvas_y ) * screen_w + (x + canvas_x), SEEK_SET);
-  write(fd, pixels ,h * screen_w + w);
+  for (int i = 0; i < h && y + i < canvas_h; ++i) {
+    lseek(fd, ((y + canvas_y + i) * screen_w + (x + canvas_x)) * 4, SEEK_SET);
+    write(fd, pixels + i * w, 4 * (w < canvas_w - x ? w : canvas_w - x));
+  }
   assert(close(fd) == 0);
 }
 

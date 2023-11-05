@@ -46,26 +46,26 @@
  * Copyright (c) 2010-2012 Ivan Voras <ivoras@freebsd.org>
  * Copyright (c) 2012 Tim Hartrick <tim@edgecast.com>
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+ 
+  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  SUCH DAMAGE.
  */
 
 #ifndef FIXEDPT_BITS
@@ -79,9 +79,9 @@ extern "C" {
 #endif
 
 #if FIXEDPT_BITS == 32
-typedef int32_t fixedpt;
-typedef	int64_t	fixedptd;
-typedef	uint32_t fixedptu;
+typedef int32_t fixedpt; //这是定点数的数据类型
+typedef	int64_t	fixedptd; 
+typedef	uint32_t fixedptu; //定点数的无符号整数数据类型
 typedef	uint64_t fixedptud;
 #elif FIXEDPT_BITS == 64
 typedef int64_t fixedpt;
@@ -92,7 +92,8 @@ typedef	__uint128_t fixedptud;
 #error "FIXEDPT_BITS must be equal to 32 or 64"
 #endif
 
-#ifndef FIXEDPT_WBITS
+
+#ifndef FIXEDPT_WBITS //整数部分的位数
 #define FIXEDPT_WBITS	24
 #endif
 
@@ -102,60 +103,64 @@ typedef	__uint128_t fixedptud;
 
 #define FIXEDPT_VCSID "$Id$"
 
-#define FIXEDPT_FBITS	(FIXEDPT_BITS - FIXEDPT_WBITS)
-#define FIXEDPT_FMASK	(((fixedpt)1 << FIXEDPT_FBITS) - 1)
+#define FIXEDPT_FBITS	(FIXEDPT_BITS - FIXEDPT_WBITS)  //表示小数部分的位数。它等于FIXEDPT_BITS - FIXEDPT_WBITS
+#define FIXEDPT_FMASK	(((fixedpt)1 << FIXEDPT_FBITS) - 1)   //掩码，用于提取定点数的小数部分
 
-#define fixedpt_rconst(R) ((fixedpt)((R) * FIXEDPT_ONE + ((R) >= 0 ? 0.5 : -0.5)))
-#define fixedpt_fromint(I) ((fixedptd)(I) << FIXEDPT_FBITS)
-#define fixedpt_toint(F) ((F) >> FIXEDPT_FBITS)
+#define fixedpt_rconst(R) ((fixedpt)((R) * FIXEDPT_ONE + ((R) >= 0 ? 0.5 : -0.5)))//将浮点数常数转换为定点数
+#define fixedpt_fromint(I) ((fixedptd)(I) << FIXEDPT_FBITS)//将整数转换为定点数的表示
+#define fixedpt_toint(F) ((F) >> FIXEDPT_FBITS) //将定点数转换为整数
 #define fixedpt_add(A,B) ((A) + (B))
 #define fixedpt_sub(A,B) ((A) - (B))
-#define fixedpt_fracpart(A) ((fixedpt)(A) & FIXEDPT_FMASK)
+#define fixedpt_fracpart(A) ((fixedpt)(A) & FIXEDPT_FMASK)//提取定点数的小数部分
 
-#define FIXEDPT_ONE	((fixedpt)((fixedpt)1 << FIXEDPT_FBITS))
-#define FIXEDPT_ONE_HALF (FIXEDPT_ONE >> 1)
-#define FIXEDPT_TWO	(FIXEDPT_ONE + FIXEDPT_ONE)
-#define FIXEDPT_PI	fixedpt_rconst(3.14159265358979323846)
-#define FIXEDPT_TWO_PI	fixedpt_rconst(2 * 3.14159265358979323846)
-#define FIXEDPT_HALF_PI	fixedpt_rconst(3.14159265358979323846 / 2)
-#define FIXEDPT_E	fixedpt_rconst(2.7182818284590452354)
+#define FIXEDPT_ONE	((fixedpt)((fixedpt)1 << FIXEDPT_FBITS))//表示1的定点数
+#define FIXEDPT_ONE_HALF (FIXEDPT_ONE >> 1) //表示0.5的定点数
+#define FIXEDPT_TWO	(FIXEDPT_ONE + FIXEDPT_ONE) //表示2的定点数
+#define FIXEDPT_PI	fixedpt_rconst(3.14159265358979323846) //π的定点数
+#define FIXEDPT_TWO_PI	fixedpt_rconst(2 * 3.14159265358979323846) //2π的定点数
+#define FIXEDPT_HALF_PI	fixedpt_rconst(3.14159265358979323846 / 2) //π/2的定点数
+#define FIXEDPT_E	fixedpt_rconst(2.7182818284590452354) //e的定点数
 
 /* fixedpt is meant to be usable in environments without floating point support
- * (e.g. microcontrollers, kernels), so we can't use floating point types directly.
+ *(e.g. microcontrollers, kernels), so we can't use floating point types directly.
  * Putting them only in macros will effectively make them optional. */
-#define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)(1L << FIXEDPT_FBITS))))
+#define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)(1L << FIXEDPT_FBITS)))) //将定点数转换为浮点数
 
 /* Multiplies a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_muli(fixedpt A, int B) {
-	return 0;
+	return A * B;
 }
 
 /* Divides a fixedpt number with an integer, returns the result. */
 static inline fixedpt fixedpt_divi(fixedpt A, int B) {
-	return 0;
+	return A / B;
 }
 
 /* Multiplies two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_mul(fixedpt A, fixedpt B) {
-	return 0;
+	return A * B / FIXEDPT_ONE;
 }
 
 
 /* Divides two fixedpt numbers, returns the result. */
 static inline fixedpt fixedpt_div(fixedpt A, fixedpt B) {
-	return 0;
+	return (fixedpt)(((fixedptd) A * (fixedptd) FIXEDPT_ONE) / (fixedptd) B);
 }
 
 static inline fixedpt fixedpt_abs(fixedpt A) {
-	return 0;
+	return A >= 0 ? A : -A;
 }
 
 static inline fixedpt fixedpt_floor(fixedpt A) {
-	return 0;
+	if (fixedpt_fracpart(A) == 0) return A;
+    if (A > 0) return A & ~FIXEDPT_FMASK;
+    else return -((-A & ~FIXEDPT_FMASK) + FIXEDPT_ONE);
 }
 
 static inline fixedpt fixedpt_ceil(fixedpt A) {
-	return 0;
+	if (fixedpt_fracpart(A) == 0) return A;
+    if (A > 0) return (A & ~FIXEDPT_FMASK) + FIXEDPT_ONE;
+    else return -(-A & ~FIXEDPT_FMASK);
 }
 
 /*
