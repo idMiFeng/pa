@@ -1,6 +1,6 @@
 #include <am.h>
 #include <nemu.h>
-
+#include <klib.h>
 #define SYNC_ADDR (VGACTL_ADDR + 4)
 
 void __am_gpu_init() {
@@ -10,7 +10,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   uint32_t screen_wh = inl(VGACTL_ADDR);
   uint32_t h = screen_wh & 0xffff;
   uint32_t w = screen_wh >> 16;
-
+  printf("王思佳%d,%d\n",w,h);
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
     .width = w,
@@ -19,7 +19,7 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
   };
 }
 
-#include <klib.h>
+
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   int x = ctl->x, y = ctl->y, w = ctl->w, h = ctl->h;
