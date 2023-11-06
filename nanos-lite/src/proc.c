@@ -25,7 +25,7 @@ void init_proc() {
   Log("Initializing processes...");
 
   // load program here
-  const char filename[] = "//bin/bird";
+  const char filename[] = "/bin/bird";
   naive_uload(NULL, filename);
 }
 
