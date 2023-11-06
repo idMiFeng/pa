@@ -39,8 +39,6 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 //buf中的len字节写到屏幕上offset处
 size_t fb_write(const void *buf, size_t offset, size_t len) {
   AM_GPU_CONFIG_T t = io_read(AM_GPU_CONFIG);
-  offset /= 4;
-  len /= 4;
   //offset = y * screen_width + x
   //使用这个 offset 来在缓冲区中找到正确的数据，然后将其写入屏幕的 (x, y) 位置。
   int y = offset / t.width;
