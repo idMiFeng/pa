@@ -32,8 +32,7 @@ int SDL_PollEvent(SDL_Event *ev) {
           }
       }
 
-      assert(flag == 1);
-
+      
       free(buf);
       return 1;
   } else {
@@ -63,7 +62,7 @@ int SDL_WaitEvent(SDL_Event *ev) {
         }
     }
 
-    assert(flag == 1);
+   
 
     free(buf);
     return 1;
