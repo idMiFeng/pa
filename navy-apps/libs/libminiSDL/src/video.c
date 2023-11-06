@@ -5,11 +5,56 @@
 #include <stdlib.h>
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
-  assert(dst && src);
-  assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+   assert(dst && src);
+    assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+
+    uint32_t * data = (uint32_t *)src->pixels;
+    uint32_t * base = (uint32_t *)dst->pixels;
+
+    int src_w = src->w;
+    int src_h = src->h;
+    int dst_w = dst->w;
+    int dst_h = dst->h;
+    int dstrect_x = dstrect->x;
+    int dstrect_y = dstrect->y;
+
+    if (srcrect == NULL) {
+        assert(src_w <= (dst_w - dstrect_x));
+        assert(src_h <= (dst_h - dstrect_y));
+
+        // int width = src_w < (dst_w - dstrect_x) ? src_w : (dst_w - dstrect_x);
+        // int height = src_h < (dst_h - dstrect_y) ? src_h : (dst_h - dstrect_y);
+
+        for (int i = 0; i < src_h; ++i) {
+            for (int j = 0; j < src_w; ++j) {
+                base[(dstrect_y + i) * dst_w + dstrect_x + j] = data[i * src_w + j];
+            }
+        }
+
+        return;
+    } else {
+        assert(0);
+    }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+    uint32_t * base = (uint32_t *)dst->pixels;
+    if (dstrect == NULL) {
+        for (int i = 0; i < dst->w * dst->h; ++i) base[i] = color;
+        return;
+    }
+    
+    int rect_x = dstrect->x;
+    int rect_y = dstrect->y;
+    int rect_w = dstrect->w < (dst->w - dstrect->x) ? dstrect->w : (dst->w - dstrect->x);
+    int rect_h = dstrect->h < (dst->h - dstrect->y) ? dstrect->h : (dst->h - dstrect->y);
+
+    for (int i = 0; i < rect_h; ++i) {
+        for (int j = 0; j < rect_w; ++j) {
+            base[(rect_y + i) * dst->w + rect_x + j] = color;
+        }
+    }
+    return;
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
