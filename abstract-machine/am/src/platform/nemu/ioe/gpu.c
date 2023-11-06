@@ -36,8 +36,13 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   }
 }
 
+// void __am_gpu_status(AM_GPU_STATUS_T *status) {
+//     // status->ready = true;
+//     status->ready = (bool) inl(SYNC_ADDR);
+//     putstr("__am_gpu_status\n");
+// }
 void __am_gpu_status(AM_GPU_STATUS_T *status) {
     // status->ready = true;
-    status->ready = (bool) inl(SYNC_ADDR);
-    putstr("__am_gpu_status\n");
+    status->ready = true;
+  
 }
