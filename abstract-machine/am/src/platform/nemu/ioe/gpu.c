@@ -29,7 +29,6 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
    //uint16_t H = inl(VGACTL_ADDR) & 0x00ff;
   uint16_t W = 400;
   uint16_t H = 300;
-  printf("W is %d,%d\n",W,H);
 
   int x = ctl->x;
   int y = ctl->y;

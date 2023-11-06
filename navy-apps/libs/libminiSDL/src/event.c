@@ -32,7 +32,7 @@ int SDL_PollEvent(SDL_Event *ev) {
       free(buf);
       return 1;
   } else {
-      ev->key.type = SDL_USEREVENT; // avoid too many `Redirecting file open ...`
+      ev->key.type = SDL_KEYUP; // avoid too many `Redirecting file open ...`
       ev->key.keysym.sym = 0;
   }
 
