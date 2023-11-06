@@ -25,10 +25,10 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  // uint16_t W = (inl(VGACTL_ADDR) & 0xff00) >> 16;
-  // uint16_t H = inl(VGACTL_ADDR) & 0x00ff;
-  uint16_t W = 400;
-  uint16_t H = 300;
+   uint16_t W = (inl(VGACTL_ADDR) & 0xff00) >> 16;
+   uint16_t H = inl(VGACTL_ADDR) & 0x00ff;
+  // uint16_t W = 400;
+  // uint16_t H = 300;
 
   int x = ctl->x;
   int y = ctl->y;
