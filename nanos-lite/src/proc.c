@@ -15,7 +15,7 @@ void hello_fun(void *arg) {
   while (1) {
     Log("Hello World from Nanos-lite with arg '%p' for the %dth time!", (uintptr_t)arg, j);
     j ++;
-    //yield();
+    yield();
   }
 }
 
@@ -39,7 +39,7 @@ void init_proc() {
 
 Context* schedule(Context *prev) {
   // save the context pointer
-  current->cp = prev;
+  //current->cp = prev;
 
 // always select pcb[0] as the new process
   current = &pcb[0];
