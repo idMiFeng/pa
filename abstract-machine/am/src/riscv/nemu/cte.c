@@ -45,9 +45,9 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  Context *kctx = (Context *)(kstack.end-sizeof(Context));
-  kctx->mepc=(uintptr_t) entry;
-  return kctx;
+  Context *c = (Context *)kstack.end - 1; // end是栈底，所以-1使sp下移一个Context的大小
+  c->mepc = (uintptr_t)entry;
+  return c;
 }
 
 
