@@ -54,7 +54,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
 //li a7, -1: 这部分指令将立即数 -1 加载到寄存器 a7 中。在 RISC-V 架构中，a7 寄存器通常用于传递系统调用号（syscall number）。
 //ecall: 这部分指令触发一个自陷操作。在 RISC-V 中，ecall 用于进入特权模式（例如，从用户态进入内核态），并执行相应的系统调用。
 void yield() {
-  asm volatile("li a7, -1; ecall");
+  asm volatile("li a7, 0; ecall");
 }
 
 bool ienabled() {

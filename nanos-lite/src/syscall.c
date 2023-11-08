@@ -49,7 +49,8 @@ void do_syscall(Context *c) {
         c->GPRx=0;
         halt(c->GPRx);
     case SYS_yield:
-        yield(); 
+        c = schedule(c);
+        break;
     //case SYS_write:ret=sys_write(c->GPR2,c->GPR3);break;
     case SYS_brk:
         c->GPRx=0;
