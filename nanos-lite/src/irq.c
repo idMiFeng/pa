@@ -7,8 +7,9 @@ static Context* do_event(Event e, Context* c) {
    switch (e.event) {
 
     case EVENT_YIELD:
-        Log("EVENT_YIELD");
+        Log("schedule %x\n",c->mepc);
         c = schedule(c);
+        Log("schedule之后 %x\n",c->mepc);
         break;
     case EVENT_SYSCALL:do_syscall(c);break;//EVENT_SYSCALL
     default: panic("Unhandled event ID = %d", e.event);break;
