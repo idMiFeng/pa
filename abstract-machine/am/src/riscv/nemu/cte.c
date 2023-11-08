@@ -13,6 +13,7 @@ Context* __am_irq_handle(Context *c) {
     Event ev = {0};
    
     switch (c->mcause) {
+      case -1:ev.event = EVENT_YIELD; break;
       case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:case 8:case 9:case 10:case 11:case 12:case 13:case 14:case 15:case 16:case 17:case 18:case 19:ev.event=EVENT_SYSCALL;break;
       default: ev.event = EVENT_ERROR; break;
     }
@@ -44,13 +45,16 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+  Context *kctx = (Context *)(kstack.end-sizeof(Context));
+  kctx->mepc=(uintptr_t) entry;
+  return kctx;
 }
+
 
 //li a7, -1: 这部分指令将立即数 -1 加载到寄存器 a7 中。在 RISC-V 架构中，a7 寄存器通常用于传递系统调用号（syscall number）。
 //ecall: 这部分指令触发一个自陷操作。在 RISC-V 中，ecall 用于进入特权模式（例如，从用户态进入内核态），并执行相应的系统调用。
 void yield() {
-  asm volatile("li a7, 0; ecall");
+  asm volatile("li a7, -1; ecall");
 }
 
 bool ienabled() {

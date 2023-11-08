@@ -1,10 +1,16 @@
 #include <common.h>
-
+/*EVENT_NULL = 0,
+    EVENT_YIELD, EVENT_SYSCALL, EVENT_PAGEFAULT, EVENT_ERROR,
+    EVENT_IRQ_TIMER, EVENT_IRQ_IODEV,*/
 static Context* do_event(Event e, Context* c) {
  
    switch (e.event) {
-    case 1:printf("event ID=%d\nc->GPRx=%d\n",e.event,c->GPRx);halt(0);printf("执行了halt之后");break;//EVENT_YIELD
-    case 2:do_syscall(c);break;//EVENT_SYSCALL
+
+    case EVENT_YIELD:
+        Log("EVENT_YIELD");
+        c = schedule(c);
+        break;
+    case EVENT_SYSCALL:do_syscall(c);break;//EVENT_SYSCALL
     default: panic("Unhandled event ID = %d", e.event);break;
    }
   //返回输入的上下文 c，表示处理事件后的上下文状态。
