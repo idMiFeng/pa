@@ -41,7 +41,7 @@ Context* schedule(Context *prev) {
   // save the context pointer
  
   current->cp = prev;
-  printf("schedule中的prev的mepc为%x\n",pcb[0].cp->mepc);
+ 
 // always select pcb[0] as the new process
   current = &pcb[0];
   
