@@ -7,7 +7,7 @@ static Context* do_event(Event e, Context* c) {
    switch (e.event) {
 
     case EVENT_YIELD:
-        Log("schedule %x\n",c->mepc);
+        Log("schedule之前%x\n",c->mepc);
         c = schedule(c);
         Log("schedule之后 %x\n",c->mepc);
         break;
