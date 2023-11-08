@@ -21,10 +21,10 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
    */
   //NO对应异常种类，epc对应触发异常的指令地址，最后返回异常入口地址
   //0是自陷
-  if(NO>=0 && NO<=19){
-    epc+=4;
+  
+  epc+=4;
     
-  }
+  
   cpu.csr.mcause = NO;
   cpu.csr.mepc = epc;
    
