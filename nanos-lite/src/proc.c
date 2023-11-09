@@ -24,11 +24,34 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
   stack.start = pcb->stack;
   stack.end = pcb->stack + STACK_SIZE;
   pcb->cp = kcontext(stack, entry, arg);
+  /*Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
+  Context *kctx = (Context *)(kstack.end-sizeof(Context));
+  kctx->mepc=(uintptr_t) entry;
+  kctx->GPR2 = (uintptr_t)arg;
+  return kctx;
 }
+*/
+}
+
+           //写在loader.c中
+// void context_uload(PCB *pcb, const char *filename) {
+//   Area stack;
+//   stack.end=heap.end;
+//   stack.start = stack.end- STACK_SIZE;
+//   uintptr_t entry = loader(pcb, filename);
+
+//   pcb->cp = ucontext(NULL, stack, (void*)entry);
+//   pcb->cp->GPRx = (uintptr_t) heap.end;
+//   /*Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
+//   Context *uctx = (Context *)(kstack.end-sizeof(Context));
+//   uctx->mepc=(uintptr_t) entry;
+//   return uctx;
+// }*/
+// }
 
 void init_proc() {
   context_kload(&pcb[0], hello_fun, "A");
-  context_kload(&pcb[1], hello_fun, "B");
+  context_uload(&pcb[1],"/bin/menu");
   switch_boot_pcb();
 
   Log("Initializing processes...");

@@ -54,3 +54,17 @@ void naive_uload(PCB *pcb, const char *filename) {
   ((void(*)())entry) ();
 }
 
+void context_uload(PCB *pcb, const char *filename) {
+  Area stack;
+  stack.end=heap.end;
+  stack.start = stack.end- STACK_SIZE;
+  uintptr_t entry = loader(pcb, filename);
+
+  pcb->cp = ucontext(NULL, stack, (void*)entry);
+  pcb->cp->GPRx = (uintptr_t) heap.end;
+  /*Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
+  Context *uctx = (Context *)(kstack.end-sizeof(Context));
+  uctx->mepc=(uintptr_t) entry;
+  return uctx;
+}*/
+}
