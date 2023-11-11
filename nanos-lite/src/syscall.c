@@ -87,6 +87,7 @@ void do_syscall(Context *c) {
         //Log("sys_gettimeofday(%p, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
         break;
     case SYS_execve:
+        Log("sys_execve(%s, %p, %p)", (const char *)c->GPR2, c->GPR3, c->GPR4);
         sys_execve((const char *)c->GPR2, (char * const*)c->GPR3, (char * const*)c->GPR4);
         while(1);
     default: panic("Unhandled syscall ID = %d", a[0]);
