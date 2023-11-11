@@ -71,7 +71,7 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     while (envp[envc] != NULL) envc++;
 
     // 分配用户栈空间，用于存储 argv 和 envp 指针
-    uintptr_t* user_stack = (uintptr_t*)heap.end;
+    uintptr_t* user_stack = (uintptr_t*)new_page(8);
 
     // 将 argv 字符串逆序拷贝到用户栈
     for (int i = argc - 1; i >= 0; i--) {

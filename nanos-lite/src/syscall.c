@@ -39,6 +39,13 @@ int sys_gettimeofday(struct timeval *tv, struct timezone *tz) {
     return 0;
 }
 
+// int sys_execve(const char *fname, char *const argv[], char *const envp[]) {
+//     context_uload(current, fname, argv, envp);
+//     switch_boot_pcb();
+//     yield();
+//     return -1;
+// }
+
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1; //#define GPR1 gpr[17] // a7
@@ -79,6 +86,9 @@ void do_syscall(Context *c) {
         ret = sys_gettimeofday((struct timeval *)c->GPR2, (struct timezone *)c->GPR3);
         //Log("sys_gettimeofday(%p, %p, %d) = %d", c->GPR2, c->GPR3, c->GPR4, ret);
         break;
+    case SYS_execve:
+        sys_execve((const char *)c->GPR2, (char * const*)c->GPR3, (char * const*)c->GPR4);
+        while(1);
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
   c->GPRx=ret;
