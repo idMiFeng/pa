@@ -121,7 +121,7 @@ word_t paddr_read(paddr_t addr, int len) {
 #ifdef CONFIG_MTRACE
   memory_access_trace(addr, len, -1, 1);
 #endif
-  out_of_bound(addr);
+  //out_of_bound(addr);
   return 0;
 }
 
