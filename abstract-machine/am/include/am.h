@@ -34,9 +34,9 @@ typedef struct {
 // A protected address space with user memory @area
 // and arch-dependent @ptr
 typedef struct {
-  int pgsize;
-  Area area;
-  void *ptr;
+  int pgsize;//页面的大小
+  Area area;//虚拟地址空间中用户态的范围
+  void *ptr;//具体的映射
 } AddrSpace;
 
 #ifdef __cplusplus

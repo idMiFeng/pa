@@ -52,7 +52,7 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 /*panic函数的具体行为取决于编程环境和语言。在许多编程语言和框架中，panic函数会引发一个异常或错误，
 并在异常处理机制中进行处理。这可能包括输出错误信息、记录日志、执行清理操作或终止程序的执行。*/
 static void out_of_bound(paddr_t addr) {
-  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+  Log("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
