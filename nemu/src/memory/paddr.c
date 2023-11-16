@@ -51,10 +51,10 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 //用于在地址超出物理内存范围时触发错误
 /*panic函数的具体行为取决于编程环境和语言。在许多编程语言和框架中，panic函数会引发一个异常或错误，
 并在异常处理机制中进行处理。这可能包括输出错误信息、记录日志、执行清理操作或终止程序的执行。*/
-// static void out_of_bound(paddr_t addr) {
-//   panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-//       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
-// }
+static void out_of_bound(paddr_t addr) {
+  panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+      addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
+}
 
 
 //根据配置信息初始化物理内存
@@ -121,7 +121,7 @@ word_t paddr_read(paddr_t addr, int len) {
 #ifdef CONFIG_MTRACE
   memory_access_trace(addr, len, -1, 1);
 #endif
-  //out_of_bound(addr);
+  out_of_bound(addr);
   return 0;
 }
 
@@ -131,5 +131,5 @@ void paddr_write(paddr_t addr, int len, word_t data) {
 #endif
   if (likely(in_pmem(addr))) { pmem_write(addr, len, data); return; }
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-  //out_of_bound(addr);
+  out_of_bound(addr);
 }
