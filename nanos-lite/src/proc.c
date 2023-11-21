@@ -65,7 +65,7 @@ void init_proc() {
   Log("Initializing processes...");
 
   // load program here
-  const char filename[] = "/bin/pal";
+  const char filename[] = "/bin/exec-test";
   naive_uload(NULL, filename);
 }
 

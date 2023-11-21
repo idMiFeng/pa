@@ -147,7 +147,7 @@ void init_monitor(int argc, char *argv[])
   /* Parse arguments. *///这个函数用于解析命令行参数，argc是参数计数，argv是参数数组。它会解析并记录命令行参数，以便在后续的初始化和运行过程中使用。
   parse_args(argc, argv);
 
-  /* Set random seed. */
+  /* Set random seed. *///初始化随机数生成器
   init_rand();
 
   /* Open the log file. */
