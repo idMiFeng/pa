@@ -60,7 +60,7 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 void init_proc() {
   //context_kload(&pcb[0], hello_fun, "A");
   //context_uload(&pcb[1],"/bin/menu");
-  switch_boot_pcb();
+  //switch_boot_pcb();
 
   Log("Initializing processes...");
 
