@@ -28,7 +28,7 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
   pgalloc_usr = pgalloc_f;
   pgfree_usr = pgfree_f;
 
-  kas.ptr = pgalloc_f(PGSIZE);//调用用户提供的页面分配函数 pgalloc_f 来为 kas 分配一个页4kb大小的内存
+  kas.ptr = pgalloc_f(PGSIZE);//调用用户提供的页面分配函数 pgalloc_f 来为 kas 分配一个页4kb大小的内存，把物理页首地址即页目录地址赋值给ptr
 
   int i;
   for (i = 0; i < LENGTH(segments); i ++) {
@@ -45,12 +45,12 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
 }
 
 void protect(AddrSpace *as) {
-  PTE *updir = (PTE*)(pgalloc_usr(PGSIZE));
-  as->ptr = updir;
-  as->area = USER_SPACE;
-  as->pgsize = PGSIZE;
+  PTE *updir = (PTE*)(pgalloc_usr(PGSIZE));//调用pgalloc_usr()返回分配的物理页的首地址
+  as->ptr = updir; //物理页首地址也就是页目录地址赋值给ptr
+  as->area = USER_SPACE;  //虚拟内存0x40000000 ~ 0x80000000,虚拟地址空间中用户态的范围，每个进程都会访问这一范围虚拟地址
+  as->pgsize = PGSIZE;//页面的大小4kb
   // map kernel space
-  memcpy(updir, kas.ptr, PGSIZE);
+  memcpy(updir, kas.ptr, PGSIZE);//将内核地址空间的内容复制到新分配的用户页目录
 }
 
 void unprotect(AddrSpace *as) {
@@ -73,8 +73,8 @@ void __am_switch(Context *c) {
 #define PTE_A 0x40
 #define PTE_D 0x80*/
 #define VA_OFFSET(addr) (addr & 0x00000FFF) //提取虚拟地址的低 12 位，即在页面内的偏移。
-#define VA_VPN_0(addr)  ((addr >> 12) & 0x000003FF) //提取虚拟地址的中间 10 位，即一级页号
-#define VA_VPN_1(addr)  ((addr >> 22) & 0x000003FF) //提取虚拟地址的高 10 位，即二级页号
+#define VA_VPN_0(addr)  ((addr >> 12) & 0x000003FF) //提取虚拟地址的中间 10 位，即二级页号
+#define VA_VPN_1(addr)  ((addr >> 22) & 0x000003FF) //提取虚拟地址的高 10 位，即一级页号
 
 #define PA_OFFSET(addr) (addr & 0x00000FFF)//提取物理地址的低 12 位，即在页面内的偏移
 #define PA_PPN(addr)    ((addr >> 12) & 0x000FFFFF)//提取物理地址的高 20 位，即物理页号

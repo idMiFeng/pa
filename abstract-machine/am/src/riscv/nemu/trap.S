@@ -48,8 +48,10 @@ __am_asm_trap:
   csrw mstatus, t1
 
   mv a0, sp
+  jal __am_get_cur_as
   jal __am_irq_handle
   mv sp, a0
+  jal __am_switch
   LOAD t1, OFFSET_STATUS(sp)
   LOAD t2, OFFSET_EPC(sp)
   csrw mstatus, t1

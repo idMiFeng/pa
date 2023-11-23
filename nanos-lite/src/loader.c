@@ -56,7 +56,7 @@ void naive_uload(PCB *pcb, const char *filename) {
 
 
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
-     Log("filename: %s", filename);
+  Log("filename: %s", filename);
   uintptr_t entry = loader(pcb, filename);
 
   Area stack;
