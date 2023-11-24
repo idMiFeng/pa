@@ -15,13 +15,11 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 size_t serial_write(const void *buf, size_t offset, size_t len) {
-  yield();
   for (size_t i = 0; i < len; ++i) putch(*((char *)buf + i));
   return len;
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
-    yield();
     AM_INPUT_KEYBRD_T t = io_read(AM_INPUT_KEYBRD);
     if (t.keycode == AM_KEY_NONE) {
     *(char*)buf = '\0';
@@ -40,7 +38,6 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 
 //buf中的len字节写到屏幕上offset处
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  yield();
   AM_GPU_CONFIG_T ev = io_read(AM_GPU_CONFIG);
   int width = ev.width;
 
